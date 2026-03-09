@@ -5,7 +5,7 @@
 | Unidad | Título |
 |--------|--------|
 | [0](./00_contexto_arquitectura_eac.md) | [Contexto y arquitectura EAC](./00_contexto_arquitectura_eac.md) |
-| 1 | Modelado de datos EAC en Laravel |
+| [0](./01_modelado_datos_eac.md) | [Modelado de datos EAC en Laravel](./01_modelado_datos_eac.md) |
 | 2 | Frontend: layout y vistas Blade para el marketplace |
 | 3 | API REST EAC |
 | 4 | Autenticación con Sanctum + Keyrock |

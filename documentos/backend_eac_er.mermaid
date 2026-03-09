@@ -1,0 +1,216 @@
+erDiagram
+
+    %% ─────────────────────────────────────────────
+    %% JERARQUÍA CURRICULAR (referencia normativa)
+    %% ─────────────────────────────────────────────
+
+    FAMILIAS_PROFESIONALES {
+        bigint id PK
+        varchar nombre
+        varchar codigo UK
+        text descripcion
+        timestamp created_at
+        timestamp updated_at
+    }
+
+    CICLOS_FORMATIVOS {
+        bigint id PK
+        bigint familia_profesional_id FK
+        varchar nombre
+        varchar codigo UK
+        enum grado "basico|medio|superior"
+        text descripcion
+        timestamp created_at
+        timestamp updated_at
+    }
+
+    MODULOS {
+        bigint id PK
+        bigint ciclo_formativo_id FK
+        varchar nombre
+        varchar codigo
+        int horas_totales
+        text descripcion
+        timestamp created_at
+        timestamp updated_at
+    }
+
+    ECOSISTEMAS_LABORALES {
+        bigint id PK
+        bigint modulo_id FK
+        varchar nombre
+        varchar codigo UK
+        text descripcion
+        boolean activo
+        timestamp created_at
+        timestamp updated_at
+    }
+
+    RESULTADOS_APRENDIZAJE {
+        bigint id PK
+        bigint ecosistema_laboral_id FK
+        varchar codigo
+        text descripcion
+        decimal peso_porcentaje
+        int orden
+        timestamp created_at
+        timestamp updated_at
+    }
+
+    CRITERIOS_EVALUACION {
+        bigint id PK
+        bigint resultado_aprendizaje_id FK
+        varchar codigo
+        text descripcion
+        decimal peso_porcentaje
+        int orden
+        timestamp created_at
+        timestamp updated_at
+    }
+
+    %% ─────────────────────────────────────────────
+    %% NÚCLEO DEL GRAFO EAC
+    %% ─────────────────────────────────────────────
+
+    SITUACIONES_COMPETENCIA {
+        bigint id PK
+        bigint ecosistema_laboral_id FK
+        varchar codigo
+        varchar titulo
+        text descripcion
+        decimal umbral_maestria
+        tinyint nivel_complejidad
+        boolean activa
+        timestamp created_at
+        timestamp updated_at
+    }
+
+    SC_CRITERIOS_EVALUACION {
+        bigint situacion_competencia_id PK "FK"
+        bigint criterio_evaluacion_id PK "FK"
+        decimal peso_en_sc
+    }
+
+    NODOS_REQUISITO {
+        bigint id PK
+        bigint situacion_competencia_id FK
+        enum tipo "conocimiento|habilidad"
+        text descripcion
+        int orden
+        timestamp created_at
+        timestamp updated_at
+    }
+
+    SC_PRECEDENCIA {
+        bigint sc_id PK "FK"
+        bigint sc_requisito_id PK "FK"
+    }
+
+    %% ─────────────────────────────────────────────
+    %% USUARIOS Y ROLES
+    %% ─────────────────────────────────────────────
+
+    USERS {
+        bigint id PK
+        varchar name
+        varchar email UK
+        timestamp email_verified_at
+        varchar password
+        varchar remember_token
+        timestamp created_at
+        timestamp updated_at
+    }
+
+    ROLES {
+        bigint id PK
+        varchar name UK
+        text description
+        timestamp created_at
+        timestamp updated_at
+    }
+
+    USER_ROLES {
+        bigint id PK
+        bigint user_id FK
+        bigint role_id FK
+        bigint ecosistema_laboral_id FK "nullable"
+        timestamp created_at
+        timestamp updated_at
+    }
+
+    MATRICULAS {
+        bigint id PK
+        bigint estudiante_id FK
+        bigint ecosistema_laboral_id FK
+        timestamp created_at
+        timestamp updated_at
+    }
+
+    %% ─────────────────────────────────────────────
+    %% ESTADO COMPETENCIAL Y TRAZABILIDAD
+    %% ─────────────────────────────────────────────
+
+    PERFILES_HABILITACION {
+        bigint id PK
+        bigint estudiante_id FK
+        bigint ecosistema_laboral_id FK
+        decimal calificacion_actual
+        timestamp created_at
+        timestamp updated_at
+    }
+
+    PERFIL_SITUACION {
+        bigint perfil_habilitacion_id PK "FK"
+        bigint situacion_competencia_id PK "FK"
+        enum gradiente_autonomia "asistido|guiado|supervisado|autonomo"
+        decimal puntuacion_conquista "nullable"
+        smallint intentos
+        timestamp fecha_conquista
+    }
+
+    HUELLAS_TALENTO {
+        bigint id PK
+        bigint estudiante_id FK
+        bigint ecosistema_laboral_id FK
+        json payload
+        varchar ngsi_ld_id "nullable"
+        timestamp generada_en
+        timestamp created_at
+        timestamp updated_at
+    }
+
+    %% ─────────────────────────────────────────────
+    %% RELACIONES
+    %% ─────────────────────────────────────────────
+
+    %% Jerarquía curricular
+    FAMILIAS_PROFESIONALES ||--o{ CICLOS_FORMATIVOS         : "tiene"
+    CICLOS_FORMATIVOS      ||--o{ MODULOS                   : "contiene"
+    MODULOS                ||--o{ ECOSISTEMAS_LABORALES     : "tiene"
+    ECOSISTEMAS_LABORALES  ||--o{ RESULTADOS_APRENDIZAJE    : "define"
+    RESULTADOS_APRENDIZAJE ||--o{ CRITERIOS_EVALUACION      : "se_evalua_con"
+
+    %% Núcleo EAC
+    ECOSISTEMAS_LABORALES    ||--o{ SITUACIONES_COMPETENCIA  : "contiene"
+    SITUACIONES_COMPETENCIA  ||--o{ NODOS_REQUISITO          : "requiere"
+    SITUACIONES_COMPETENCIA  ||--o{ SC_CRITERIOS_EVALUACION  : "cubre"
+    CRITERIOS_EVALUACION     ||--o{ SC_CRITERIOS_EVALUACION  : "cubierto_por"
+    SITUACIONES_COMPETENCIA  ||--o{ SC_PRECEDENCIA           : "es_requerida_por"
+    SITUACIONES_COMPETENCIA  ||--o{ SC_PRECEDENCIA           : "tiene_como_requisito"
+
+    %% Usuarios y roles
+    USERS                  ||--o{ USER_ROLES               : "tiene"
+    ROLES                  ||--o{ USER_ROLES               : "asignado_a"
+    ECOSISTEMAS_LABORALES  ||--o{ USER_ROLES               : "contexto"
+    USERS                  ||--o{ MATRICULAS               : "matriculado_en"
+    ECOSISTEMAS_LABORALES  ||--o{ MATRICULAS               : "tiene_matriculas"
+
+    %% Estado competencial
+    USERS                    ||--o{ PERFILES_HABILITACION    : "tiene"
+    ECOSISTEMAS_LABORALES    ||--o{ PERFILES_HABILITACION    : "agrupa"
+    PERFILES_HABILITACION    ||--o{ PERFIL_SITUACION         : "conquista"
+    SITUACIONES_COMPETENCIA  ||--o{ PERFIL_SITUACION         : "conquistada_en"
+
+    %% huella
+    USERS                    ||--o{ HUELLAS_TALENTO          : "genera"
+    ECOSISTEMAS_LABORALES    ||--o{ HUELLAS_TALENTO          : "resumida_en"
