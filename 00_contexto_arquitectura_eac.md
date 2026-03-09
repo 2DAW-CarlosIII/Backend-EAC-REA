@@ -1,5 +1,9 @@
 # Unidad 0: Contexto y Arquitectura del Backend EAC
 
+Esta unidad tiene como objetivo situarte en el contexto del proyecto, familiarizarte con el vocabulario esencial del Modelo EAC y entender la arquitectura técnica del sistema que vas a construir. Es fundamental que domines estos conceptos antes de empezar a escribir código, porque toda la práctica se basa en ellos.
+
+No obstante, te ofrecemos [una presentación](backend_eac_presentacion.html) que puedes revisar para tener una visión general rápida antes de profundizar en el texto. Si quieres pasar directamente a la parte técnica, puedes saltar al [apartado 0.6](#06-preparación-del-entorno-con-laradock), donde te guiaremos para preparar tu entorno de desarrollo con Laradock.
+
 ## Objetivos de esta unidad
 
 Al finalizar esta unidad serás capaz de:
@@ -355,7 +359,7 @@ El entorno de desarrollo se gestiona con **Laradock**, un conjunto de imágenes 
 
 ### Paso 0.6.1: Descargar Laradock (si no lo tienes ya)
 
-> _Si utilizas la máquina virtual del curso o ya tienes Laradock instalado de prácticas anteriores, salta directamente al paso 0.6.2._
+> _Si utilizas la máquina virtual del curso o ya tienes Laradock instalado de prácticas anteriores, salta directamente al paso [0.6.2. Generar el proyecto Laravel](#062-generar-el-proyecto-laravel)._
 
 ```bash
 cd ~/Documentos/laravel/
@@ -459,6 +463,10 @@ Edita `backend-eac/.env`:
 APP_NAME="Backend EAC"
 APP_URL=http://backend-eac.test
 
+APP_LOCALE=es
+APP_FALLBACK_LOCALE=es
+APP_FAKER_LOCALE=es_ES
+
 DB_CONNECTION=mysql
 DB_HOST=mariadb
 DB_PORT=3306
@@ -473,28 +481,37 @@ FIWARE_CLIENT_ID=
 FIWARE_CLIENT_SECRET=
 ```
 
+Edita también el fichero `backend-eac/.env.example` para añadir las variables de entorno relacionadas con FIWARE, para que cualquiera que clone el proyecto tenga la referencia de qué variables configurar:
+
+```ini
+# Endpoints del nodo FIWARE (los proporcionará el instructor)
+FIWARE_ORION_URL=https://orion.vfds.example.org
+FIWARE_KEYROCK_URL=https://keyrock.vfds.example.org
+FIWARE_CLIENT_ID=
+FIWARE_CLIENT_SECRET=
+```
+
 ### Paso 0.6.6: Ejecutar las migraciones iniciales
 
-En Laravel 11 las sesiones se almacenan en base de datos por defecto, por lo que es necesario ejecutar las migraciones antes de acceder a la aplicación:
+En Laravel 12 las sesiones se almacenan en base de datos por defecto, por lo que es necesario ejecutar las migraciones antes de acceder a la aplicación:
 
 ```bash
-# Accede al workspace de Laradock
-docker exec -ti laradock-workspace-1 bash
-
-# Dentro del contenedor, ve al proyecto
-cd backend-eac
+cd ~/Documentos/laravel/backend-eac
 php artisan migrate
 ```
 
 Deberías ver algo como:
 
 ```
-  INFO  Running migrations.
+   INFO  Preparing database.  
 
-  2024_00_00_000000_create_users_table ............... 12ms DONE
-  2024_00_00_000001_create_cache_table ............... 8ms DONE
-  2024_00_00_000002_create_jobs_table ................ 9ms DONE
-  2024_00_00_000003_create_sessions_table ............ 7ms DONE
+  Creating migration table ............................................ 43.41ms DONE
+
+   INFO  Running migrations.  
+
+  0001_01_01_000000_create_users_table ................................ 64.48ms DONE
+  0001_01_01_000001_create_cache_table ................................ 40.10ms DONE
+  0001_01_01_000002_create_jobs_table ................................. 59.21ms DONE
 ```
 
 ### Paso 0.6.7: Definir el servidor virtual en nginx
@@ -529,13 +546,13 @@ Para confirmar la versión:
 ```bash
 # Dentro del workspace de Laradock
 php artisan --version
-# Laravel Framework 11.x.x
+# Laravel Framework 12.x.x
 ```
 
 ### Paso 0.6.9: Instalar dependencias de frontend
 
 ```bash
-# Dentro del workspace, en el directorio backend-eac
+# Desde el directorio backend-eac
 npm install
 npm run dev
 ```
