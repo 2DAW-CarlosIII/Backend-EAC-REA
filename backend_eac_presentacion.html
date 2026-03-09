@@ -1,0 +1,882 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Backend EAC — Nodo Central</title>
+  <script src="https://unpkg.com/react@18/umd/react.development.js" crossorigin></script>
+  <script src="https://unpkg.com/react-dom@18/umd/react-dom.development.js" crossorigin></script>
+  <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html, body, #root { height: 100%; }
+    body { overflow-x: hidden; }
+    ::-webkit-scrollbar { width: 6px; height: 6px; }
+    ::-webkit-scrollbar-track { background: rgba(255,255,255,0.04); }
+    ::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.15); border-radius: 3px; }
+  </style>
+</head>
+<body>
+  <div id="root"></div>
+
+  <script type="text/babel">
+  const { useState, useEffect, useCallback } = React;
+
+	/* ─────────────────────────────────────────────
+	   DATOS DE SLIDES
+	───────────────────────────────────────────── */
+	const SLIDES = [
+	  { id: "cover", type: "cover" },
+	  { id: "vfds", type: "vfds" },
+	  { id: "position", type: "position" },
+	  { id: "vocab1", type: "vocab1" },
+	  { id: "vocab2", type: "vocab2" },
+	  { id: "vocab3", type: "vocab3" },
+	  { id: "grafo", type: "grafo" },
+	  { id: "curriculum", type: "curriculum" },
+	  { id: "architecture", type: "architecture" },
+	  { id: "flow", type: "flow" },
+	  { id: "closing", type: "closing" },
+	];
+
+	/* ─────────────────────────────────────────────
+	   ESTILOS GLOBALES INLINE
+	───────────────────────────────────────────── */
+	const FONTS = `
+	  @import url('https://fonts.googleapis.com/css2?family=Syne:wght@400;700;800&family=DM+Mono:wght@400;500&family=DM+Sans:ital,wght@0,300;0,400;0,500;1,300&display=swap');
+	`;
+
+	/* ─────────────────────────────────────────────
+	   PALETA
+	───────────────────────────────────────────── */
+	const C = {
+	  bg:      "#07090f",
+	  surface: "#0e1220",
+	  border:  "#1e2640",
+	  accent:  "#00d4aa",
+	  accent2: "#4f7fff",
+	  accent3: "#ff6b6b",
+	  warm:    "#ffb547",
+	  text:    "#e8ecf4",
+	  muted:   "#6b7a99",
+	  grad1:   "linear-gradient(135deg, #00d4aa22 0%, #4f7fff22 100%)",
+	};
+
+	/* ─────────────────────────────────────────────
+	   COMPONENTES AUXILIARES
+	───────────────────────────────────────────── */
+	const Tag = ({ children, color = C.accent }) => (
+	  <span style={{
+	    display: "inline-block",
+	    background: color + "22",
+	    border: `1px solid ${color}55`,
+	    color,
+	    fontFamily: "'DM Mono', monospace",
+	    fontSize: "0.7rem",
+	    padding: "2px 10px",
+	    borderRadius: 4,
+	    letterSpacing: "0.08em",
+	    textTransform: "uppercase",
+	  }}>{children}</span>
+	);
+
+	const Card = ({ children, style = {}, glow }) => (
+	  <div style={{
+	    background: C.surface,
+	    border: `1px solid ${glow ? glow + "55" : C.border}`,
+	    borderRadius: 12,
+	    padding: "20px 24px",
+	    boxShadow: glow ? `0 0 24px ${glow}18` : "none",
+	    ...style,
+	  }}>{children}</div>
+	);
+
+	const Heading = ({ children, size = 48, accent = false, style = {} }) => (
+	  <h2 style={{
+	    fontFamily: "'Syne', sans-serif",
+	    fontWeight: 800,
+	    fontSize: size,
+	    lineHeight: 1.05,
+	    color: accent ? C.accent : C.text,
+	    margin: 0,
+	    ...style,
+	  }}>{children}</h2>
+	);
+
+	const Body = ({ children, style = {} }) => (
+	  <p style={{
+	    fontFamily: "'DM Sans', sans-serif",
+	    fontWeight: 300,
+	    fontSize: "1rem",
+	    color: C.text,
+	    lineHeight: 1.7,
+	    margin: 0,
+	    ...style,
+	  }}>{children}</p>
+	);
+
+	const Mono = ({ children, color = C.accent, style = {} }) => (
+	  <span style={{
+	    fontFamily: "'DM Mono', monospace",
+	    color,
+	    fontSize: "0.88em",
+	    ...style,
+	  }}>{children}</span>
+	);
+
+	const Divider = () => (
+	  <div style={{ width: 48, height: 3, background: C.accent, borderRadius: 2, margin: "16px 0" }} />
+	);
+
+	/* ─────────────────────────────────────────────
+	   SLIDE: PORTADA
+	───────────────────────────────────────────── */
+	function SlideCover({ visible }) {
+	  return (
+	    <div style={{ position: "relative", height: "100%", display: "flex", flexDirection: "column", justifyContent: "center", padding: "0 80px" }}>
+	      {/* fondo de puntos */}
+	      <svg style={{ position: "absolute", inset: 0, opacity: 0.07, pointerEvents: "none" }} width="100%" height="100%">
+		<defs>
+		  <pattern id="dots" x="0" y="0" width="40" height="40" patternUnits="userSpaceOnUse">
+		    <circle cx="2" cy="2" r="1.5" fill={C.accent} />
+		  </pattern>
+		</defs>
+		<rect width="100%" height="100%" fill="url(#dots)" />
+	      </svg>
+
+	      {/* línea decorativa */}
+	      <div style={{ position: "absolute", top: 0, left: 0, width: 4, height: "100%", background: `linear-gradient(180deg, ${C.accent} 0%, ${C.accent2} 100%)` }} />
+
+	      <div style={{ opacity: visible ? 1 : 0, transform: visible ? "none" : "translateY(30px)", transition: "all 0.7s ease" }}>
+		<Tag>Proyecto PP3 · VFDS · 2026</Tag>
+		<Heading size={72} style={{ marginTop: 24, maxWidth: 700 }}>
+		  Backend<br /><span style={{ color: C.accent }}>EAC</span>
+		</Heading>
+		<Heading size={24} style={{ color: C.muted, fontWeight: 400, marginTop: 12 }}>
+		  Espacio de Aprendizaje Competencial
+		</Heading>
+		<Divider />
+		<Body style={{ maxWidth: 520, color: C.muted }}>
+		  Una aplicación Laravel que traduce el currículo de FP en un grafo de competencias interoperable con el <Mono>Vocational Federated Dataspace</Mono>.
+		</Body>
+	      </div>
+
+	      {/* esquina decorativa */}
+	      <div style={{ position: "absolute", bottom: 60, right: 80, textAlign: "right", opacity: 0.5 }}>
+		<div style={{ fontFamily: "'DM Mono', monospace", fontSize: "0.75rem", color: C.muted }}>Unidad 0 · Contexto y Arquitectura</div>
+	      </div>
+
+	      {/* círculos decorativos */}
+	      <div style={{ position: "absolute", right: -100, top: "50%", transform: "translateY(-50%)", width: 500, height: 500, borderRadius: "50%", border: `1px solid ${C.accent}22`, pointerEvents: "none" }} />
+	      <div style={{ position: "absolute", right: -60, top: "50%", transform: "translateY(-50%)", width: 360, height: 360, borderRadius: "50%", border: `1px solid ${C.accent2}22`, pointerEvents: "none" }} />
+	    </div>
+	  );
+	}
+
+	/* ─────────────────────────────────────────────
+	   SLIDE: ¿QUÉ ES EL VFDS?
+	───────────────────────────────────────────── */
+	function SlideVFDS({ visible }) {
+	  const items = [
+	    { icon: "🏫", label: "Centro Educativo A", color: C.accent },
+	    { icon: "🏫", label: "Centro Educativo B", color: C.accent },
+	    { icon: "🏢", label: "Empresa / RRHH", color: C.accent2 },
+	    { icon: "🏛️", label: "Administración", color: C.warm },
+	  ];
+	  return (
+	    <div style={{ height: "100%", display: "flex", flexDirection: "column", justifyContent: "center", padding: "0 80px", gap: 32 }}>
+	      <div style={{ opacity: visible ? 1 : 0, transition: "opacity 0.5s ease" }}>
+		<Tag>Sección 0.1</Tag>
+		<Heading size={44} style={{ marginTop: 12 }}>¿Qué es el <span style={{ color: C.accent }}>VFDS</span>?</Heading>
+		<Divider />
+	      </div>
+
+	      <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 20, opacity: visible ? 1 : 0, transition: "opacity 0.6s ease 0.2s" }}>
+		<Card glow={C.accent}>
+		  <div style={{ fontFamily: "'Syne', sans-serif", fontWeight: 700, color: C.accent, fontSize: "0.8rem", letterSpacing: "0.1em", marginBottom: 10 }}>ESPACIO DE DATOS</div>
+		  <Body>Infraestructura que permite compartir datos de forma <strong style={{ color: C.text }}>controlada y soberana</strong>. No es una base de datos central: cada participante conserva el control de lo que comparte, con quién y bajo qué condiciones.</Body>
+		</Card>
+		<Card glow={C.accent2}>
+		  <div style={{ fontFamily: "'Syne', sans-serif", fontWeight: 700, color: C.accent2, fontSize: "0.8rem", letterSpacing: "0.1em", marginBottom: 10 }}>FEDERADO</div>
+		  <Body>No existe una autoridad central que lo posea todo. Cada <strong style={{ color: C.text }}>nodo es autónomo</strong>, aplica las reglas comunes del espacio y mantiene su propia infraestructura.</Body>
+		</Card>
+	      </div>
+
+	      <div style={{ opacity: visible ? 1 : 0, transition: "opacity 0.7s ease 0.4s" }}>
+		<Card style={{ padding: "16px 24px" }}>
+		  <div style={{ display: "flex", alignItems: "center", gap: 16, flexWrap: "wrap" }}>
+		    <div style={{ fontFamily: "'DM Mono', monospace", color: C.muted, fontSize: "0.8rem" }}>Participantes del VFDS →</div>
+		    {items.map((it, i) => (
+		      <div key={i} style={{ display: "flex", alignItems: "center", gap: 8, background: it.color + "15", border: `1px solid ${it.color}33`, borderRadius: 8, padding: "6px 14px" }}>
+		        <span>{it.icon}</span>
+		        <span style={{ fontFamily: "'DM Sans', sans-serif", fontSize: "0.85rem", color: it.color }}>{it.label}</span>
+		      </div>
+		    ))}
+		    <div style={{ fontFamily: "'DM Mono', monospace", color: C.muted, fontSize: "0.8rem", marginLeft: "auto" }}>
+		      Tecnología: <Mono color={C.accent}>FIWARE</Mono>
+		    </div>
+		  </div>
+		</Card>
+	      </div>
+	    </div>
+	  );
+	}
+
+	/* ─────────────────────────────────────────────
+	   SLIDE: POSICIÓN DEL BACKEND EAC
+	───────────────────────────────────────────── */
+	function SlidePosition({ visible }) {
+	  return (
+	    <div style={{ height: "100%", display: "flex", flexDirection: "column", justifyContent: "center", padding: "0 80px", gap: 28 }}>
+	      <div style={{ opacity: visible ? 1 : 0, transition: "opacity 0.5s" }}>
+		<Tag>Sección 0.1</Tag>
+		<Heading size={40} style={{ marginTop: 12 }}>El rol del <span style={{ color: C.accent }}>Backend EAC</span> en el VFDS</Heading>
+		<Divider />
+	      </div>
+
+	      <div style={{ display: "grid", gridTemplateColumns: "1.4fr 1fr", gap: 24, opacity: visible ? 1 : 0, transition: "opacity 0.6s ease 0.2s" }}>
+		{/* diagrama */}
+		<Card style={{ padding: 24, background: "#070c18" }}>
+		  <div style={{ fontFamily: "'DM Mono', monospace", fontSize: "0.72rem", color: C.muted, lineHeight: 1.9 }}>
+		    {[
+		      ["┌─────────────────────────────────┐", C.muted],
+		      ["│      BACKEND EAC (Laravel)      │", C.accent],
+		      ["│                                 │", C.muted],
+		      ["│  ┌──────────┐  ┌─────────────┐  │", C.muted],
+		      ["│  │  Vistas  │  │  API REST   │  │", C.text],
+		      ["│  │  Blade   │  │  /api/v1/   │  │", C.text],
+		      ["│  └────┬─────┘  └──────┬──────┘  │", C.muted],
+		      ["│  ┌────▼───────────────▼──────┐  │", C.muted],
+		      ["│  │   Lógica de negocio EAC   │  │", C.warm],
+		      ["│  │  Grafo · ZDP · Evaluación │  │", C.warm],
+		      ["│  └────────────┬──────────────┘  │", C.muted],
+		      ["│  ┌────────────▼──────────────┐  │", C.muted],
+		      ["│  │    MariaDB (local)        │  │", C.accent2],
+		      ["│  └───────────────────────────┘  │", C.muted],
+		      ["└──────────────┬──────────────────┘", C.muted],
+		      ["               │ NGSI-LD", C.muted],
+		      ["               ▼", C.muted],
+		      ["┌──────────────────────────────────┐", C.muted],
+		      ["│  Orion-LD · Keyrock · Wilma PEP  │", C.accent],
+		      ["└──────────────────────────────────┘", C.muted],
+		    ].map(([line, color], i) => (
+		      <div key={i} style={{ color }}><pre>{line}</pre></div>
+		    ))}
+		  </div>
+		</Card>
+
+		{/* triple función */}
+		<div style={{ display: "flex", flexDirection: "column", gap: 16 }}>
+		  {[
+		    { num: "01", color: C.accent, title: "Gestión interna", desc: "Grafo de SCs, perfiles de estudiantes, evaluación y navegación competencial." },
+		    { num: "02", color: C.accent2, title: "Publicación en el VFDS", desc: "Publica estados de competencia como entidades NGSI-LD en el Context Broker." },
+		    { num: "03", color: C.warm, title: "API REST pública", desc: "Interfaz para el frontend del marketplace y otros sistemas del ecosistema." },
+		  ].map((it) => (
+		    <Card key={it.num} glow={it.color} style={{ padding: "16px 20px" }}>
+		      <div style={{ display: "flex", alignItems: "flex-start", gap: 14 }}>
+		        <div style={{ fontFamily: "'Syne', sans-serif", fontWeight: 800, fontSize: "1.8rem", color: it.color + "55", lineHeight: 1 }}>{it.num}</div>
+		        <div>
+		          <div style={{ fontFamily: "'Syne', sans-serif", fontWeight: 700, color: it.color, fontSize: "0.9rem", marginBottom: 4 }}>{it.title}</div>
+		          <Body style={{ fontSize: "0.88rem", color: C.muted }}>{it.desc}</Body>
+		        </div>
+		      </div>
+		    </Card>
+		  ))}
+		</div>
+	      </div>
+	    </div>
+	  );
+	}
+
+	/* ─────────────────────────────────────────────
+	   SLIDE: VOCABULARIO EAC PARTE 1
+	───────────────────────────────────────────── */
+	function SlideVocab1({ visible }) {
+	  const terms = [
+	    {
+	      term: "Ecosistema Laboral",
+	      mono: "Dominio",
+	      color: C.accent,
+	      desc: "Mapa completo de competencias de un título oficial de FP. Entidad raíz del sistema: todo SC y todo Perfil pertenece a él.",
+	      example: "Módulo piloto: Técnicas Básicas de Merchandising",
+	    },
+	    {
+	      term: "Situación de Competencia",
+	      mono: "SC",
+	      color: C.accent2,
+	      desc: "Unidad mínima de desempeño profesional. No es un tema ni un examen: es un reto real que integra varios Resultados de Aprendizaje.",
+	      example: "SC-01: Diseñar la disposición de productos en un lineal",
+	    },
+	    {
+	      term: "Nodos de Requisito",
+	      mono: "Base",
+	      color: C.warm,
+	      desc: "Elementos atómicos previos a una SC. Se dividen en Conocimientos (Saber) y Habilidades (Saber hacer).",
+	      example: '"Conocer los principios del color" · "Manejar software de planogramas"',
+	    },
+	  ];
+
+	  return (
+	    <div style={{ height: "100%", display: "flex", flexDirection: "column", justifyContent: "center", padding: "0 80px", gap: 28 }}>
+	      <div style={{ opacity: visible ? 1 : 0, transition: "opacity 0.5s" }}>
+		<Tag>Sección 0.2 · Vocabulario EAC (I)</Tag>
+		<Heading size={40} style={{ marginTop: 12 }}>Las entidades del <span style={{ color: C.accent }}>dominio</span></Heading>
+		<Divider />
+	      </div>
+	      <div style={{ display: "flex", flexDirection: "column", gap: 16, opacity: visible ? 1 : 0, transition: "opacity 0.6s ease 0.2s" }}>
+		{terms.map((t) => (
+		  <Card key={t.term} glow={t.color} style={{ padding: "18px 24px" }}>
+		    <div style={{ display: "grid", gridTemplateColumns: "220px 1fr 1fr", gap: 20, alignItems: "center" }}>
+		      <div>
+		        <div style={{ fontFamily: "'Syne', sans-serif", fontWeight: 700, fontSize: "1rem", color: t.color }}>{t.term}</div>
+		        <Mono color={t.color + "99"} style={{ fontSize: "0.75rem" }}>{t.mono}</Mono>
+		      </div>
+		      <Body style={{ fontSize: "0.9rem", borderLeft: `2px solid ${t.color}33`, paddingLeft: 16 }}>{t.desc}</Body>
+		      <div style={{ background: t.color + "10", borderRadius: 8, padding: "10px 14px", borderLeft: `3px solid ${t.color}` }}>
+		        <div style={{ fontFamily: "'DM Mono', monospace", fontSize: "0.72rem", color: t.color, marginBottom: 4 }}>Ejemplo</div>
+		        <Body style={{ fontSize: "0.82rem", color: C.muted }}>{t.example}</Body>
+		      </div>
+		    </div>
+		  </Card>
+		))}
+	      </div>
+	    </div>
+	  );
+	}
+
+	/* ─────────────────────────────────────────────
+	   SLIDE: VOCABULARIO EAC PARTE 2
+	───────────────────────────────────────────── */
+	function SlideVocab2({ visible }) {
+	  const levels = [
+	    { key: "asistido", label: "Asistido", desc: "Necesita guía continua", pct: 25 },
+	    { key: "guiado", label: "Guiado", desc: "Avanza con instrucciones paso a paso", pct: 50 },
+	    { key: "supervisado", label: "Supervisado", desc: "Ejecuta pero requiere revisión", pct: 75 },
+	    { key: "autonomo", label: "Autónomo", desc: "Calidad profesional, sin apoyo", pct: 100 },
+	  ];
+
+	  return (
+	    <div style={{ height: "100%", display: "flex", flexDirection: "column", justifyContent: "center", padding: "0 80px", gap: 28 }}>
+	      <div style={{ opacity: visible ? 1 : 0, transition: "opacity 0.5s" }}>
+		<Tag>Sección 0.2 · Vocabulario EAC (II)</Tag>
+		<Heading size={40} style={{ marginTop: 12 }}>Evaluación y <span style={{ color: C.accent }}>autonomía</span></Heading>
+		<Divider />
+	      </div>
+
+	      <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 24, opacity: visible ? 1 : 0, transition: "opacity 0.6s ease 0.2s" }}>
+		{/* Umbral de maestría */}
+		<Card glow={C.accent3} style={{ padding: 24 }}>
+		  <div style={{ fontFamily: "'Syne', sans-serif", fontWeight: 700, color: C.accent3, fontSize: "1rem", marginBottom: 8 }}>Umbral de Maestría</div>
+		  <Mono color={C.accent3 + "99"} style={{ fontSize: "0.75rem" }}>Mastery Threshold</Mono>
+		  <Divider />
+		  <Body style={{ fontSize: "0.9rem" }}>
+		    El estándar mínimo de <strong style={{ color: C.text }}>calidad profesional</strong> para que una SC se considere "conquistada". No es un porcentaje de aciertos: incluye rigor técnico, eficiencia y adecuación al estándar del sector.
+		  </Body>
+		  <div style={{ marginTop: 16, display: "flex", gap: 10 }}>
+		    <div style={{ flex: 1, background: "#ff6b6b22", borderRadius: 8, padding: "10px", textAlign: "center" }}>
+		      <div style={{ fontSize: "1.4rem" }}>❌</div>
+		      <div style={{ fontFamily: "'DM Mono', monospace", fontSize: "0.7rem", color: C.muted, marginTop: 4 }}>Lo ha intentado</div>
+		    </div>
+		    <div style={{ display: "flex", alignItems: "center", color: C.accent3, fontWeight: 700 }}>→</div>
+		    <div style={{ flex: 1, background: "#00d4aa22", borderRadius: 8, padding: "10px", textAlign: "center" }}>
+		      <div style={{ fontSize: "1.4rem" }}>✅</div>
+		      <div style={{ fontFamily: "'DM Mono', monospace", fontSize: "0.7rem", color: C.muted, marginTop: 4 }}>Es capaz profesionalmente</div>
+		    </div>
+		  </div>
+		</Card>
+
+		{/* Gradiente de autonomía */}
+		<Card glow={C.accent} style={{ padding: 24 }}>
+		  <div style={{ fontFamily: "'Syne', sans-serif", fontWeight: 700, color: C.accent, fontSize: "1rem", marginBottom: 8 }}>Gradiente de Autonomía</div>
+		  <Mono color={C.accent + "99"} style={{ fontSize: "0.75rem" }}>Autonomy Gradient</Mono>
+		  <Divider />
+		  <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
+		    {levels.map((lv) => (
+		      <div key={lv.key} style={{ display: "flex", alignItems: "center", gap: 12 }}>
+		        <div style={{ width: 90, fontFamily: "'DM Mono', monospace", fontSize: "0.72rem", color: C.accent }}>{lv.label}</div>
+		        <div style={{ flex: 1, height: 6, background: C.border, borderRadius: 3, overflow: "hidden" }}>
+		          <div style={{ height: "100%", width: `${lv.pct}%`, background: `linear-gradient(90deg, ${C.accent2}, ${C.accent})`, borderRadius: 3, transition: "width 1s ease" }} />
+		        </div>
+		        <div style={{ width: 180, fontFamily: "'DM Sans', sans-serif", fontSize: "0.75rem", color: C.muted }}>{lv.desc}</div>
+		      </div>
+		    ))}
+		  </div>
+		  <div style={{ marginTop: 12, fontFamily: "'DM Mono', monospace", fontSize: "0.72rem", color: C.muted }}>
+		    → aparece en la tabla pivot <Mono>perfil_situacion</Mono>
+		  </div>
+		</Card>
+	      </div>
+	    </div>
+	  );
+	}
+
+	/* ─────────────────────────────────────────────
+	   SLIDE: VOCABULARIO EAC PARTE 3
+	───────────────────────────────────────────── */
+	function SlideVocab3({ visible }) {
+	  const terms = [
+	    { term: "Perfil de Habilitación", mono: "Estado", color: C.accent2, desc: "Subconjunto exacto de SCs que el estudiante domina de forma autónoma en un momento dado. Es la fotografía de su nivel competencial actual." },
+	    { term: "Zona de Despliegue Proximal", mono: "ZDP / Franja", color: C.accent, desc: "SCs que el estudiante puede abordar ahora mismo: sus requisitos ya están conquistados, pero él aún no las ha completado. Motor de la recomendación." },
+	    { term: "Huella de Talento", mono: "Talent Footprint", color: C.warm, desc: "Registro exportable del recorrido completo: qué SCs conquistó, cómo (Gradiente), cuánto tardó y qué itinerario siguió. Publicable en el VFDS." },
+	    { term: "Politopía de Aprendizaje", mono: "Principio", color: C.accent3, desc: "Múltiples rutas válidas dentro del grafo para alcanzar el mismo estado competencial final. El sistema lo respeta y lo facilita." },
+	  ];
+
+	  return (
+	    <div style={{ height: "100%", display: "flex", flexDirection: "column", justifyContent: "center", padding: "0 80px", gap: 24 }}>
+	      <div style={{ opacity: visible ? 1 : 0, transition: "opacity 0.5s" }}>
+		<Tag>Sección 0.2 · Vocabulario EAC (III)</Tag>
+		<Heading size={40} style={{ marginTop: 12 }}>Navegación y <span style={{ color: C.accent }}>trazabilidad</span></Heading>
+		<Divider />
+	      </div>
+	      <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 16, opacity: visible ? 1 : 0, transition: "opacity 0.6s ease 0.2s" }}>
+		{terms.map((t) => (
+		  <Card key={t.term} glow={t.color} style={{ padding: "20px 22px" }}>
+		    <div style={{ fontFamily: "'Syne', sans-serif", fontWeight: 700, color: t.color, fontSize: "0.95rem" }}>{t.term}</div>
+		    <Mono color={t.color + "88"} style={{ fontSize: "0.72rem" }}>{t.mono}</Mono>
+		    <div style={{ width: 32, height: 2, background: t.color, borderRadius: 1, margin: "10px 0" }} />
+		    <Body style={{ fontSize: "0.88rem", color: C.muted }}>{t.desc}</Body>
+		  </Card>
+		))}
+	      </div>
+	    </div>
+	  );
+	}
+
+	/* ─────────────────────────────────────────────
+	   SLIDE: GRAFO DE PRECEDENCIA
+	───────────────────────────────────────────── */
+	function SlideGrafo({ visible }) {
+	  const nodes = [
+	    { id: "SC01", x: 80,  y: 100, label: "SC-01", sub: "Visual Merchandising", color: C.accent },
+	    { id: "SC02", x: 80,  y: 230, label: "SC-02", sub: "Planograma básico",    color: C.accent },
+	    { id: "SC03", x: 300, y: 165, label: "SC-03", sub: "Análisis rendimiento", color: C.accent2 },
+	    { id: "SC04", x: 520, y: 80,  label: "SC-04", sub: "Escaparatismo",        color: C.warm },
+	    { id: "SC05", x: 520, y: 250, label: "SC-05", sub: "KPIs avanzados",       color: C.warm },
+	  ];
+	  const edges = [
+	    ["SC01","SC03"], ["SC02","SC03"], ["SC03","SC04"], ["SC03","SC05"]
+	  ];
+	  const getNode = (id) => nodes.find(n => n.id === id);
+
+	  return (
+	    <div style={{ height: "100%", display: "flex", flexDirection: "column", justifyContent: "center", padding: "0 80px", gap: 24 }}>
+	      <div style={{ opacity: visible ? 1 : 0, transition: "opacity 0.5s" }}>
+		<Tag>Sección 0.2 · Vocabulario EAC</Tag>
+		<Heading size={40} style={{ marginTop: 12 }}>Grafo de <span style={{ color: C.accent }}>Precedencia</span></Heading>
+		<Divider />
+	      </div>
+
+	      <div style={{ display: "grid", gridTemplateColumns: "1.2fr 1fr", gap: 32, opacity: visible ? 1 : 0, transition: "opacity 0.6s ease 0.2s" }}>
+		{/* SVG grafo */}
+		<Card style={{ padding: 24, background: "#070c18", overflow: "hidden" }}>
+		  <svg width="100%" viewBox="0 0 640 350" style={{ display: "block" }}>
+		    {edges.map(([a, b], i) => {
+		      const na = getNode(a), nb = getNode(b);
+		      return (
+		        <line key={i}
+		          x1={na.x + 70} y1={na.y + 20}
+		          x2={nb.x} y2={nb.y + 20}
+		          stroke={C.border} strokeWidth={2}
+		          markerEnd="url(#arrow)"
+		        />
+		      );
+		    })}
+		    <defs>
+		      <marker id="arrow" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto">
+		        <path d="M0,0 L0,6 L8,3 z" fill={C.muted} />
+		      </marker>
+		    </defs>
+		    {nodes.map(n => (
+		      <g key={n.id}>
+		        <rect x={n.x} y={n.y} width={140} height={44} rx={8}
+		          fill={n.color + "18"} stroke={n.color + "66"} strokeWidth={1.5} />
+		        <text x={n.x + 12} y={n.y + 16} fontFamily="'Syne', sans-serif" fontWeight="700" fontSize="13" fill={n.color}>{n.label}</text>
+		        <text x={n.x + 12} y={n.y + 32} fontFamily="'DM Sans', sans-serif" fontSize="10" fill={C.muted}>{n.sub}</text>
+		      </g>
+		    ))}
+		    <text x="10" y="330" fontFamily="'DM Mono', monospace" fontSize="10" fill={C.muted}>
+		      Tabla: sc_precedencia (tabla de adyacencia)
+		    </text>
+		  </svg>
+		</Card>
+
+		{/* explicación */}
+		<div style={{ display: "flex", flexDirection: "column", gap: 16 }}>
+		  <Card glow={C.accent} style={{ padding: "18px 22px" }}>
+		    <div style={{ fontFamily: "'Syne', sans-serif", fontWeight: 700, color: C.accent, fontSize: "0.9rem", marginBottom: 8 }}>¿Qué define?</div>
+		    <Body style={{ fontSize: "0.9rem" }}>Las <strong style={{ color: C.text }}>dependencias entre SCs</strong>. Si SC-03 requiere SC-01 y SC-02, el estudiante no puede acceder a SC-03 hasta que ambas estén conquistadas.</Body>
+		  </Card>
+		  <Card style={{ padding: "18px 22px" }}>
+		    <div style={{ fontFamily: "'Syne', sans-serif", fontWeight: 700, color: C.muted, fontSize: "0.9rem", marginBottom: 8 }}>En la base de datos</div>
+		    <div style={{ fontFamily: "'DM Mono', monospace", fontSize: "0.8rem", color: C.accent, background: "#00d4aa0a", border: `1px solid ${C.accent}22`, borderRadius: 6, padding: "10px 14px", lineHeight: 1.7 }}>
+		      sc_precedencia<br />
+		      ├── sc_id (FK → situaciones_competencia)<br />
+		      └── sc_requisito_id (FK → situaciones_competencia)
+		    </div>
+		  </Card>
+		  <Card glow={C.warm} style={{ padding: "18px 22px" }}>
+		    <div style={{ fontFamily: "'Syne', sans-serif", fontWeight: 700, color: C.warm, fontSize: "0.9rem", marginBottom: 6 }}>Politopía</div>
+		    <Body style={{ fontSize: "0.87rem", color: C.muted }}>Pueden existir múltiples caminos válidos para llegar al mismo estado. El sistema los respeta todos.</Body>
+		  </Card>
+		</div>
+	      </div>
+	    </div>
+	  );
+	}
+
+	/* ─────────────────────────────────────────────
+	   SLIDE: DE LA NORMA A LA ARQUITECTURA
+	───────────────────────────────────────────── */
+	function SlideCurriculum({ visible }) {
+	  return (
+	    <div style={{ height: "100%", display: "flex", flexDirection: "column", justifyContent: "center", padding: "0 80px", gap: 24 }}>
+	      <div style={{ opacity: visible ? 1 : 0, transition: "opacity 0.5s" }}>
+		<Tag>Sección 0.3</Tag>
+		<Heading size={40} style={{ marginTop: 12 }}>De la <span style={{ color: C.accent }}>norma</span> a la arquitectura</Heading>
+		<Divider />
+	      </div>
+
+	      <div style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: 16, opacity: visible ? 1 : 0, transition: "opacity 0.6s ease 0.2s" }}>
+		{[
+		  {
+		    step: "A",
+		    color: C.accent,
+		    title: "Deconstrucción curricular",
+		    desc: "Los Resultados de Aprendizaje (RA) y sus Criterios de Evaluación (CE) se agrupan por afinidad funcional para formar las Situaciones de Competencia.",
+		    code: "RA 1 → CE 1a + CE 1b + CE 1c\n         ↓\n       SC-01",
+		  },
+		  {
+		    step: "B",
+		    color: C.accent2,
+		    title: "Definición de umbrales",
+		    desc: "Cada SC se vincula a sus Nodos de Requisito y se define el Umbral de Maestría: el estándar mínimo para considerar la SC conquistada.",
+		    code: "SC-01\n├── Conocimiento: principios del color\n├── Habilidad: uso de software\n└── Umbral: 80% de calidad técnica",
+		  },
+		  {
+		    step: "C",
+		    color: C.warm,
+		    title: "Construcción del grafo",
+		    desc: "La unión de todas las SCs con sus requisitos y umbrales genera el Grafo de Precedencia: el núcleo del sistema.",
+		    code: "SC-01 ──┐\n        ├──► SC-03 ──► SC-04\nSC-02 ──┘         └──► SC-05",
+		  },
+		].map((s) => (
+		  <Card key={s.step} glow={s.color} style={{ padding: "22px 22px", display: "flex", flexDirection: "column", gap: 14 }}>
+		    <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
+		      <div style={{ width: 36, height: 36, borderRadius: "50%", background: s.color + "20", border: `2px solid ${s.color}`, display: "flex", alignItems: "center", justifyContent: "center", fontFamily: "'Syne', sans-serif", fontWeight: 800, color: s.color, flexShrink: 0 }}>{s.step}</div>
+		      <div style={{ fontFamily: "'Syne', sans-serif", fontWeight: 700, color: s.color, fontSize: "0.95rem" }}>{s.title}</div>
+		    </div>
+		    <Body style={{ fontSize: "0.87rem", color: C.muted }}>{s.desc}</Body>
+		    <div style={{ background: "#07090f", border: `1px solid ${s.color}22`, borderRadius: 8, padding: "10px 14px", fontFamily: "'DM Mono', monospace", fontSize: "0.72rem", color: s.color, lineHeight: 1.8, whiteSpace: "pre" }}>{s.code}</div>
+		  </Card>
+		))}
+	      </div>
+
+	      <div style={{ opacity: visible ? 1 : 0, transition: "opacity 0.7s ease 0.4s" }}>
+		<Card style={{ padding: "14px 24px", background: C.accent + "0a", border: `1px solid ${C.accent}33` }}>
+		  <Body style={{ fontSize: "0.9rem" }}>
+		    💡 Una SC integra múltiples CE dándoles <strong style={{ color: C.accent }}>sentido profesional</strong>: ya no es "superar el criterio 1a", sino "ser capaz de diseñar la disposición de un lineal como un profesional".
+		  </Body>
+		</Card>
+	      </div>
+	    </div>
+	  );
+	}
+
+	/* ─────────────────────────────────────────────
+	   SLIDE: ARQUITECTURA DEL SISTEMA
+	───────────────────────────────────────────── */
+	function SlideArchitecture({ visible }) {
+	  const rows = [
+	    ["Framework backend", "Laravel", "11.x", C.accent],
+	    ["Base de datos", "MariaDB", "10.6+", C.accent2],
+	    ["Autenticación API", "Laravel Sanctum", "integrado", C.accent],
+	    ["Autenticación OIDC", "FIWARE Keyrock", "nodo desplegado", C.warm],
+	    ["Context Broker", "FIWARE Orion-LD", "nodo desplegado", C.warm],
+	    ["Frontend", "Blade + Bootstrap 5", "—", C.muted],
+	    ["Gráficas", "ConsoleTVs/Charts", "6.x", C.accent2],
+	    ["Testing", "PHPUnit", "integrado", C.muted],
+	  ];
+
+	  return (
+	    <div style={{ height: "100%", display: "flex", flexDirection: "column", justifyContent: "center", padding: "0 80px", gap: 24 }}>
+	      <div style={{ opacity: visible ? 1 : 0, transition: "opacity 0.5s" }}>
+		<Tag>Sección 0.4</Tag>
+		<Heading size={40} style={{ marginTop: 12 }}>Arquitectura del <span style={{ color: C.accent }}>sistema</span></Heading>
+		<Divider />
+	      </div>
+
+	      <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 24, opacity: visible ? 1 : 0, transition: "opacity 0.6s ease 0.2s" }}>
+		{/* stack */}
+		<Card style={{ padding: 0, overflow: "hidden" }}>
+		  <div style={{ background: C.accent + "15", padding: "12px 20px", borderBottom: `1px solid ${C.border}`, fontFamily: "'Syne', sans-serif", fontWeight: 700, fontSize: "0.85rem", color: C.accent }}>Stack tecnológico</div>
+		  <div style={{ padding: "8px 0" }}>
+		    {rows.map(([capa, tech, ver, color]) => (
+		      <div key={capa} style={{ display: "grid", gridTemplateColumns: "140px 1fr 90px", padding: "8px 20px", borderBottom: `1px solid ${C.border}`, alignItems: "center" }}>
+		        <span style={{ fontFamily: "'DM Sans', sans-serif", fontSize: "0.8rem", color: C.muted }}>{capa}</span>
+		        <span style={{ fontFamily: "'DM Mono', monospace", fontSize: "0.82rem", color }}>{tech}</span>
+		        <span style={{ fontFamily: "'DM Mono', monospace", fontSize: "0.72rem", color: C.muted, textAlign: "right" }}>{ver}</span>
+		      </div>
+		    ))}
+		  </div>
+		</Card>
+
+		{/* entidad NGSI-LD */}
+		<Card style={{ padding: 0, overflow: "hidden" }}>
+		  <div style={{ background: C.accent2 + "15", padding: "12px 20px", borderBottom: `1px solid ${C.border}`, fontFamily: "'Syne', sans-serif", fontWeight: 700, fontSize: "0.85rem", color: C.accent2 }}>Entidad NGSI-LD en Orion</div>
+		  <pre style={{ margin: 0, padding: "16px 20px", fontFamily: "'DM Mono', monospace", fontSize: "0.72rem", lineHeight: 1.7, color: C.muted, overflow: "auto" }}>{`{
+	  "id": "urn:ngsi-ld:PerfilHabilitacion:42",
+	  "type": "PerfilHabilitacion",
+	  "estudiante": {
+	    "type": "Relationship",
+	    "object": "urn:ngsi-ld:Estudiante:42"
+	  },
+	  "situacionesConquistadas": {
+	    "type": "Property",
+	    "value": `}<span style={{ color: C.accent }}>["SC-01", "SC-02"]</span>{`
+	  },
+	  "gradienteAutonomia": {
+	    "type": "Property",
+	    "value": { `}<span style={{ color: C.warm }}>"SC-01": "autonomo"</span>{` }
+	  },
+	  "zonaDespliegueProximal": {
+	    "type": "Property",
+	    "value": `}<span style={{ color: C.accent2 }}>["SC-03", "SC-05"]</span>{`
+	  }
+	}`}</pre>
+		</Card>
+	      </div>
+	    </div>
+	  );
+	}
+
+	/* ─────────────────────────────────────────────
+	   SLIDE: FLUJO END-TO-END
+	───────────────────────────────────────────── */
+	function SlideFlow({ visible }) {
+	  const steps = [
+	    { n: "01", actor: "DOCENTE", color: C.accent2, action: "Diseña el espacio competencial", detail: "Crea el Ecosistema Laboral, las SCs y el Grafo de Precedencia", unit: "Unidades 1 y 2" },
+	    { n: "02", actor: "ESTUDIANTE", color: C.accent, action: "Accede y se autentica", detail: "OAuth2 vía Keyrock. El backend carga su Perfil de Habilitación", unit: "Unidad 4" },
+	    { n: "03", actor: "SISTEMA", color: C.warm, action: "Calcula la ZDP", detail: "Recorre el Grafo con el Perfil actual. Devuelve las SCs accesibles", unit: "Unidad 5" },
+	    { n: "04", actor: "ESTUDIANTE", color: C.accent, action: "Trabaja en una SC de su ZDP", detail: "Envía evidencias. El sistema aplica el Umbral de Maestría", unit: "Unidad 7" },
+	    { n: "05", actor: "SISTEMA", color: C.warm, action: "Actualiza y publica", detail: "Perfil actualizado. Gradiente registrado. Publica en Orion-LD", unit: "Unidades 6 y 7" },
+	    { n: "06", actor: "SISTEMA", color: C.warm, action: "Recalcula la ZDP", detail: "Nuevas SCs pueden haberse desbloqueado. Vuelve al paso 03", unit: "Unidad 5" },
+	    { n: "07", actor: "ESTUDIANTE", color: C.accent, action: "Exporta la Huella de Talento", detail: "JSON exportable, visible en el marketplace del VFDS", unit: "Unidades 2 y 7" },
+	  ];
+
+	  return (
+	    <div style={{ height: "100%", display: "flex", flexDirection: "column", justifyContent: "center", padding: "0 80px", gap: 20 }}>
+	      <div style={{ opacity: visible ? 1 : 0, transition: "opacity 0.5s" }}>
+		<Tag>Sección 0.5</Tag>
+		<Heading size={40} style={{ marginTop: 12 }}>Flujo <span style={{ color: C.accent }}>end-to-end</span></Heading>
+		<Divider />
+	      </div>
+
+	      <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 10, opacity: visible ? 1 : 0, transition: "opacity 0.6s ease 0.2s" }}>
+		{steps.map((s, i) => (
+		  <div key={s.n} style={{ display: "flex", gap: 12, alignItems: "flex-start", background: C.surface, border: `1px solid ${C.border}`, borderRadius: 10, padding: "12px 16px" }}>
+		    <div style={{ flexShrink: 0, width: 32, height: 32, borderRadius: "50%", background: s.color + "20", border: `1.5px solid ${s.color}66`, display: "flex", alignItems: "center", justifyContent: "center", fontFamily: "'Syne', sans-serif", fontWeight: 800, color: s.color, fontSize: "0.75rem" }}>{s.n}</div>
+		    <div style={{ flex: 1 }}>
+		      <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 2 }}>
+		        <Tag color={s.color}>{s.actor}</Tag>
+		        <span style={{ fontFamily: "'Syne', sans-serif", fontWeight: 700, color: C.text, fontSize: "0.88rem" }}>{s.action}</span>
+		      </div>
+		      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+		        <Body style={{ fontSize: "0.78rem", color: C.muted }}>{s.detail}</Body>
+		        <Mono color={s.color + "88"} style={{ fontSize: "0.68rem", whiteSpace: "nowrap", marginLeft: 8 }}>{s.unit}</Mono>
+		      </div>
+		    </div>
+		  </div>
+		))}
+	      </div>
+	    </div>
+	  );
+	}
+
+	/* ─────────────────────────────────────────────
+	   SLIDE: CIERRE
+	───────────────────────────────────────────── */
+	function SlideClosing({ visible }) {
+	  const units = [
+	    { n: "1", title: "Modelado de datos", color: C.accent },
+	    { n: "2", title: "Frontend Blade", color: C.accent2 },
+	    { n: "3", title: "API REST", color: C.accent },
+	    { n: "4", title: "Auth + Keyrock", color: C.warm },
+	    { n: "5", title: "Motor ZDP", color: C.accent2 },
+	    { n: "6", title: "FIWARE Orion", color: C.accent },
+	    { n: "7", title: "Evaluación", color: C.accent3 },
+	    { n: "8", title: "Visualización", color: C.warm },
+	    { n: "9", title: "Testing", color: C.muted },
+	  ];
+
+	  return (
+	    <div style={{ position: "relative", height: "100%", display: "flex", flexDirection: "column", justifyContent: "center", padding: "0 80px", gap: 32 }}>
+	      <div style={{ position: "absolute", top: 0, left: 0, width: 4, height: "100%", background: `linear-gradient(180deg, ${C.accent2} 0%, ${C.accent} 100%)` }} />
+
+	      <div style={{ opacity: visible ? 1 : 0, transition: "opacity 0.5s" }}>
+		<Tag>Lo que vas a construir</Tag>
+		<Heading size={48} style={{ marginTop: 16 }}>
+		  Ahora ya sabes<br /><span style={{ color: C.accent }}>por qué</span> y <span style={{ color: C.accent2 }}>qué</span>.
+		</Heading>
+		<Divider />
+		<Body style={{ maxWidth: 560, color: C.muted }}>En las siguientes unidades lo construirás pieza a pieza, sobre una base de código real y un nodo FIWARE ya desplegado al que conectar.</Body>
+	      </div>
+
+	      <div style={{ opacity: visible ? 1 : 0, transition: "opacity 0.7s ease 0.3s" }}>
+		<div style={{ display: "flex", gap: 10, flexWrap: "wrap" }}>
+		  {units.map((u) => (
+		    <div key={u.n} style={{ background: u.color + "12", border: `1px solid ${u.color}33`, borderRadius: 10, padding: "10px 16px", display: "flex", alignItems: "center", gap: 10 }}>
+		      <div style={{ fontFamily: "'Syne', sans-serif", fontWeight: 800, color: u.color, fontSize: "1.1rem" }}>{u.n}</div>
+		      <div style={{ fontFamily: "'DM Sans', sans-serif", fontSize: "0.82rem", color: C.muted }}>{u.title}</div>
+		    </div>
+		  ))}
+		</div>
+	      </div>
+
+	      <div style={{ opacity: visible ? 1 : 0, transition: "opacity 0.9s ease 0.6s" }}>
+		<div style={{ fontFamily: "'DM Mono', monospace", fontSize: "0.8rem", color: C.muted }}>
+		  github.com/C3-VFDS/use_case_pkst &nbsp;·&nbsp; PP3 Red de Centros de Excelencia en IA y Big Data &nbsp;·&nbsp; 2026
+		</div>
+	      </div>
+	    </div>
+	  );
+	}
+
+	/* ─────────────────────────────────────────────
+	   COMPONENTE RAÍZ: PRESENTACIÓN
+	───────────────────────────────────────────── */
+	function Presentacion() {
+	  const [current, setCurrent] = useState(0);
+	  const [visible, setVisible] = useState(true);
+
+	  const SLIDE_MAP = {
+	    cover:        SlideCover,
+	    vfds:         SlideVFDS,
+	    position:     SlidePosition,
+	    vocab1:       SlideVocab1,
+	    vocab2:       SlideVocab2,
+	    vocab3:       SlideVocab3,
+	    grafo:        SlideGrafo,
+	    curriculum:   SlideCurriculum,
+	    architecture: SlideArchitecture,
+	    flow:         SlideFlow,
+	    closing:      SlideClosing,
+	  };
+
+	  const navigate = useCallback((dir) => {
+	    const next = current + dir;
+	    if (next < 0 || next >= SLIDES.length) return;
+	    setVisible(false);
+	    setTimeout(() => {
+	      setCurrent(next);
+	      setVisible(true);
+	    }, 300);
+	  }, [current]);
+
+	  useEffect(() => {
+	    const onKey = (e) => {
+	      if (e.key === "ArrowRight" || e.key === "ArrowDown" || e.key === " ") navigate(1);
+	      if (e.key === "ArrowLeft"  || e.key === "ArrowUp")                    navigate(-1);
+	    };
+	    window.addEventListener("keydown", onKey);
+	    return () => window.removeEventListener("keydown", onKey);
+	  }, [navigate]);
+
+	  const slide = SLIDES[current];
+	  const SlideComponent = SLIDE_MAP[slide.type];
+
+	  return (
+	    <>
+	      <style>{FONTS}</style>
+	      <div style={{
+		width: "100vw", height: "100vh",
+		background: C.bg,
+		display: "flex", flexDirection: "column",
+		overflow: "hidden",
+		userSelect: "none",
+	      }}>
+		{/* SLIDE AREA */}
+		<div style={{
+		  flex: 1,
+		  opacity: visible ? 1 : 0,
+		  transform: visible ? "none" : "translateY(12px)",
+		  transition: "opacity 0.3s ease, transform 0.3s ease",
+		  overflow: "hidden",
+		}}>
+		  <SlideComponent visible={visible} />
+		</div>
+
+		{/* BARRA DE NAVEGACIÓN */}
+		<div style={{
+		  height: 56,
+		  background: C.surface,
+		  borderTop: `1px solid ${C.border}`,
+		  display: "flex",
+		  alignItems: "center",
+		  justifyContent: "space-between",
+		  padding: "0 32px",
+		}}>
+		  {/* indicadores */}
+		  <div style={{ display: "flex", gap: 6 }}>
+		    {SLIDES.map((_, i) => (
+		      <button
+		        key={i}
+		        onClick={() => {
+		          setVisible(false);
+		          setTimeout(() => { setCurrent(i); setVisible(true); }, 280);
+		        }}
+		        style={{
+		          width: i === current ? 24 : 8,
+		          height: 8,
+		          borderRadius: 4,
+		          background: i === current ? C.accent : C.border,
+		          border: "none",
+		          cursor: "pointer",
+		          padding: 0,
+		          transition: "all 0.3s ease",
+		        }}
+		      />
+		    ))}
+		  </div>
+
+		  {/* contador */}
+		  <div style={{ fontFamily: "'DM Mono', monospace", fontSize: "0.78rem", color: C.muted }}>
+		    {String(current + 1).padStart(2, "0")} / {String(SLIDES.length).padStart(2, "0")}
+		  </div>
+
+		  {/* botones */}
+		  <div style={{ display: "flex", gap: 8 }}>
+		    {[
+		      { label: "← Anterior", dir: -1 },
+		      { label: "Siguiente →", dir: 1 },
+		    ].map(({ label, dir }) => (
+		      <button
+		        key={label}
+		        onClick={() => navigate(dir)}
+		        disabled={(dir === -1 && current === 0) || (dir === 1 && current === SLIDES.length - 1)}
+		        style={{
+		          background: "transparent",
+		          border: `1px solid ${C.border}`,
+		          color: C.muted,
+		          fontFamily: "'DM Sans', sans-serif",
+		          fontSize: "0.82rem",
+		          padding: "6px 16px",
+		          borderRadius: 6,
+		          cursor: "pointer",
+		          opacity: (dir === -1 && current === 0) || (dir === 1 && current === SLIDES.length - 1) ? 0.3 : 1,
+		          transition: "all 0.2s",
+		        }}
+		      >{label}</button>
+		    ))}
+		  </div>
+		</div>
+	      </div>
+	    </>
+	  );
+	}
+
+    const root = ReactDOM.createRoot(document.getElementById("root"));
+    root.render(<Presentacion />);
+  </script>
+</body>
+</html>
+
