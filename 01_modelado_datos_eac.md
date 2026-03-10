@@ -89,18 +89,6 @@ php artisan migrate
 
 Esto crea la tabla `migrations` y aplica las migraciones por defecto de Laravel (`users`, `password_reset_tokens`, `sessions`, `cache`, `jobs`).
 
-### Instalar la autenticación base
-
-```bash
-php artisan make:auth   # solo si usas el scaffolding clásico
-# o con Breeze:
-composer require laravel/breeze --dev
-php artisan breeze:install blade
-php artisan migrate
-```
-
-> En esta unidad nos centramos en el modelo de datos. La autenticación con Keyrock se completa en la Unidad 4.
-
 ---
 
 ## 1.3. Migraciones: jerarquía curricular
@@ -360,18 +348,18 @@ public function up(): void
     Schema::create('sc_precedencia', function (Blueprint $table) {
         // La SC que requiere un prerequisito
         $table->foreignId('sc_id')
-              ->constrained('situaciones_competencia')
-              ->cascadeOnDelete();
+            ->constrained('situaciones_competencia')
+            ->cascadeOnDelete();
         // La SC que debe estar conquistada previamente
         $table->foreignId('sc_requisito_id')
-              ->constrained('situaciones_competencia')
-              ->cascadeOnDelete();
+            ->constrained('situaciones_competencia')
+            ->cascadeOnDelete();
 
         $table->primary(['sc_id', 'sc_requisito_id']);
-
-        // Evitar que una SC sea requisito de sí misma
-        $table->check('sc_id != sc_requisito_id');
     });
+
+    // Evitar que una SC sea requisito de sí misma
+    DB::statement('ALTER TABLE sc_precedencia ADD CONSTRAINT chk_sc_precedencia CHECK (sc_id != sc_requisito_id);');
 }
 ```
 
@@ -532,33 +520,19 @@ public function up(): void
 
 La Huella de Talento es el registro exportable del recorrido completo del estudiante. Se almacena como JSON para facilitar su publicación en el VFDS.
 
-```bash
-php artisan make:migration create_huellas_talento_table
-```
+Crea la migración de la tabla `huellas_talento` con los siguientes campos:
 
-```php
-public function up(): void
-{
-    Schema::create('huellas_talento', function (Blueprint $table) {
-        $table->id();
-        $table->foreignId('estudiante_id')
-              ->constrained('users')
-              ->cascadeOnDelete();
-        $table->foreignId('ecosistema_laboral_id')
-              ->constrained('ecosistemas_laborales')
-              ->cascadeOnDelete();
+* `id` (PK)
+* `estudiante_id` (FK a `users`)
+* `ecosistema_laboral_id` (FK a `ecosistemas_laborales`)
+* `payload` (JSON, para almacenar el estado competencial completo en el momento de la exportación)
+* `ngsi_ld_id` (string, para almacenar la URN del recurso NGSI-LD publicado en Orion, si ya fue publicado)
+* `generada_en` (timestamp, para registrar cuándo se generó la huella)
+* `created_at` y `updated_at` (timestamps por defecto de Laravel)
 
-        // Snapshot del estado competencial en el momento de la exportación
-        $table->json('payload');
+Asegúrate de definir las claves foráneas (con borrado en cascada) correctamente para mantener la integridad referencial. La tabla `huellas_talento` es crucial para la trazabilidad y la interoperabilidad con el VFDS, ya que contiene un snapshot del estado competencial del estudiante en un formato exportable.
 
-        // URN del recurso NGSI-LD publicado en Orion (si ya fue publicado)
-        $table->string('ngsi_ld_id')->nullable();
-
-        $table->timestamp('generada_en')->useCurrent();
-        $table->timestamps();
-    });
-}
-```
+Puedes ver una posible solución en el apartado [Soluciones](#tabla-huellas_talento).
 
 ---
 
@@ -762,65 +736,20 @@ class CriterioEvaluacion extends Model
 
 Este es el modelo más rico del sistema. Incluye las relaciones con el grafo de precedencia (tanto hacia arriba como hacia abajo).
 
-```php
-// app/Models/SituacionCompetencia.php
+Una vez que hemos creado el modelo `SituacionCompetencia`, modifícalo para incluir todas sus relaciones:
 
-class SituacionCompetencia extends Model
-{
-    protected $fillable = [
-        'ecosistema_laboral_id', 'codigo', 'titulo', 'descripcion',
-        'umbral_maestria', 'nivel_complejidad', 'activa',
-    ];
+* Relación con `EcosistemaLaboral` (belongsTo)
+* Relación con `NodoRequisito` (hasMany)
+* Relación de prerequisitos (belongsToMany a sí mismo)
+* Relación de dependientes (belongsToMany a sí mismo)
+* Relación con `CriterioEvaluacion` (belongsToMany)
 
-    protected $casts = [
-        'umbral_maestria'   => 'decimal:2',
-        'activa'            => 'boolean',
-    ];
+Define, además, las siguientes propiedades estáticas:
 
-    public function ecosistemaLaboral(): BelongsTo
-    {
-        return $this->belongsTo(EcosistemaLaboral::class);
-    }
+* `fillable` con los campos editables (sin `id` ni `timestamps`)
+* `casts` para convertir `umbral_maestria` a decimal y `activa` a booleano
 
-    public function nodosRequisito(): HasMany
-    {
-        return $this->hasMany(NodoRequisito::class);
-    }
-
-    // SCs que deben estar conquistadas ANTES de acceder a esta SC
-    public function prerequisitos(): BelongsToMany
-    {
-        return $this->belongsToMany(
-            SituacionCompetencia::class,
-            'sc_precedencia',
-            'sc_id',           // esta SC
-            'sc_requisito_id'  // sus prerequisitos
-        );
-    }
-
-    // SCs que requieren esta SC como prerequisito
-    public function dependientes(): BelongsToMany
-    {
-        return $this->belongsToMany(
-            SituacionCompetencia::class,
-            'sc_precedencia',
-            'sc_requisito_id', // esta SC es el requisito
-            'sc_id'            // las SCs que la necesitan
-        );
-    }
-
-    // CEs del currículo que cubre esta SC
-    public function criteriosEvaluacion(): BelongsToMany
-    {
-        return $this->belongsToMany(
-            CriterioEvaluacion::class,
-            'sc_criterios_evaluacion',
-            'situacion_competencia_id',
-            'criterio_evaluacion_id'
-        )->withPivot('peso_en_sc');
-    }
-}
-```
+Puedes ver una posible solución en el apartado [Soluciones](#modelo-situacioncompetencia).
 
 ### 1.8.8. NodoRequisito
 
@@ -1003,7 +932,81 @@ public function definition(): array
 }
 ```
 
-### 1.9.2. Seeder del módulo piloto
+### 1.9.2. Crear `FamiliasProfesionalesSeeder` desde CSV
+
+En el repositorio de este REA en GitHub, puedes encontrar [ficheros _CSV_](https://github.com/2DAW-CarlosIII/Backend-EAC-REA/tree/master/documentos/seeders) con datos reales de familias profesionales, ciclos formativos, módulos formativos, resultados de aprendizaje y criterios de evaluación, preparados para alimentar la base de datos.
+
+1) Copia los _CSV_ al directorio `storage/seeders` de la aplicación _Laravel_:
+
+(Usamos `storage/seeders` para mantener los CSV de importación dentro del proyecto.
+
+2) Crear el seeder:
+
+```bash
+php artisan make:seeder FamiliasProfesionalesSeeder
+```
+
+3) Implementación mínima usando `str_getcsv()` (pega esto en `database/seeders/FamiliasProfesionalesSeeder.php` en el método `run()`):
+
+```php
+public function run(): void
+{
+    $path = storage_path('seeders/familias.csv');
+
+    if (!file_exists($path)) {
+        $this->command->error("CSV no encontrado: $path");
+        return;
+    }
+
+    // Leer todas las líneas y parsear con str_getcsv
+    $rows = array_map('str_getcsv', file($path));
+
+    // El primer registro es la cabecera
+    $header = array_map('trim', array_shift($rows));
+
+    $data = [];
+    foreach ($rows as $row) {
+        // Ignorar filas vacías o mal formadas
+        if (count($row) < count($header)) {
+            continue;
+        }
+
+        $rec = array_combine($header, $row);
+
+        $data[] = [
+            'nombre' => trim($rec['nombre'] ?? ''),
+            'codigo' => trim($rec['codigo'] ?? ''),
+            'descripcion' => $rec['descripcion'] ?? null,
+            'created_at' => now(),
+            'updated_at' => now(),
+        ];
+    }
+
+    // Insertar/actualizar usando upsert para evitar duplicados por 'codigo'
+    DB::transaction(function () use ($data) {
+        foreach (array_chunk($data, 200) as $chunk) {
+            DB::table('familias_profesionales')->upsert(
+                $chunk,
+                ['codigo'], // llave única para evitar duplicados
+                ['nombre', 'descripcion', 'updated_at']
+            );
+        }
+    });
+}
+```
+
+Notas y recomendaciones:
+
+- Asegúrate de que el CSV tenga una cabecera con, al menos, las columnas `nombre` y `codigo`.
+- Si el fichero contiene BOM u otros problemas de codificación, normaliza a UTF-8 antes de importarlo.
+- Usa `upsert()` con la columna `codigo` para poder ejecutar el seeder repetidas veces sin duplicar registros.
+- Valida y limpia los campos (trim, casts) antes de insertar.
+
+### 1.9.3. Crear seeders para ciclos, módulos, RA y CE
+
+Repite el proceso anterior para cada entidad (CicloFormativo, Modulo, ResultadoAprendizaje, CriterioEvaluacion), creando un seeder específico para cada una y adaptando el código de importación al formato de su CSV correspondiente. Asegúrate de respetar las relaciones entre entidades (por ejemplo, al importar módulos, debes relacionarlos con el ciclo formativo correcto).
+
+### 1.9.4. Seeders del módulo piloto
 
 ```bash
 php artisan make:seeder EcosistemaLaboralSeeder
@@ -1192,7 +1195,7 @@ public function run(): void
 }
 ```
 
-Registra el seeder en `DatabaseSeeder`:
+### 1.9.4. Registra los seeders en `DatabaseSeeder`:
 
 ```php
 // database/seeders/DatabaseSeeder.php
@@ -1200,6 +1203,11 @@ Registra el seeder en `DatabaseSeeder`:
 public function run(): void
 {
     $this->call([
+        FamiliasProfesionalesSeeder::class,
+        CiclosFormativosSeeder::class,
+        ModulosSeeder::class,
+        ResultadosAprendizajeSeeder::class,
+        CriteriosEvaluacionSeeder::class,
         EcosistemaLaboralSeeder::class,
     ]);
 }
@@ -1274,6 +1282,100 @@ Antes de continuar con la Unidad 2, confirma que:
 - [Laravel Eloquent Relationships](https://laravel.com/docs/11.x/eloquent-relationships)
 - [Laravel Factories](https://laravel.com/docs/11.x/eloquent-factories)
 - [Laravel Seeders](https://laravel.com/docs/11.x/seeding)
+
+## Soluciones
+
+### Tabla `huellas_talento`
+
+```bash
+php artisan make:migration create_huellas_talento_table
+```
+
+```php
+public function up(): void
+{
+    Schema::create('huellas_talento', function (Blueprint $table) {
+        $table->id();
+        $table->foreignId('estudiante_id')
+              ->constrained('users')
+              ->cascadeOnDelete();
+        $table->foreignId('ecosistema_laboral_id')
+              ->constrained('ecosistemas_laborales')
+              ->cascadeOnDelete();
+
+        // Snapshot del estado competencial en el momento de la exportación
+        $table->json('payload');
+
+        // URN del recurso NGSI-LD publicado en Orion (si ya fue publicado)
+        $table->string('ngsi_ld_id')->nullable();
+
+        $table->timestamp('generada_en')->useCurrent();
+        $table->timestamps();
+    });
+}
+```
+
+### Modelo `SituacionCompetencia`
+
+```php
+// app/Models/SituacionCompetencia.php
+
+class SituacionCompetencia extends Model
+{
+    protected $fillable = [
+        'ecosistema_laboral_id', 'codigo', 'titulo', 'descripcion',
+        'umbral_maestria', 'nivel_complejidad', 'activa',
+    ];
+
+    protected $casts = [
+        'umbral_maestria'   => 'decimal:2',
+        'activa'            => 'boolean',
+    ];
+
+    public function ecosistemaLaboral(): BelongsTo
+    {
+        return $this->belongsTo(EcosistemaLaboral::class);
+    }
+
+    public function nodosRequisito(): HasMany
+    {
+        return $this->hasMany(NodoRequisito::class);
+    }
+
+    // SCs que deben estar conquistadas ANTES de acceder a esta SC
+    public function prerequisitos(): BelongsToMany
+    {
+        return $this->belongsToMany(
+            SituacionCompetencia::class,
+            'sc_precedencia',
+            'sc_id',           // esta SC
+            'sc_requisito_id'  // sus prerequisitos
+        );
+    }
+
+    // SCs que requieren esta SC como prerequisito
+    public function dependientes(): BelongsToMany
+    {
+        return $this->belongsToMany(
+            SituacionCompetencia::class,
+            'sc_precedencia',
+            'sc_requisito_id', // esta SC es el requisito
+            'sc_id'            // las SCs que la necesitan
+        );
+    }
+
+    // CEs del currículo que cubre esta SC
+    public function criteriosEvaluacion(): BelongsToMany
+    {
+        return $this->belongsToMany(
+            CriterioEvaluacion::class,
+            'sc_criterios_evaluacion',
+            'situacion_competencia_id',
+            'criterio_evaluacion_id'
+        )->withPivot('peso_en_sc');
+    }
+}
+```
 
 ---
 

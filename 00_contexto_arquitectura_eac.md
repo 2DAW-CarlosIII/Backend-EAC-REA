@@ -2,7 +2,7 @@
 
 Esta unidad tiene como objetivo situarte en el contexto del proyecto, familiarizarte con el vocabulario esencial del Modelo EAC y entender la arquitectura técnica del sistema que vas a construir. Es fundamental que domines estos conceptos antes de empezar a escribir código, porque toda la práctica se basa en ellos.
 
-No obstante, te ofrecemos [una presentación](backend_eac_presentacion.html) que puedes revisar para tener una visión general rápida antes de profundizar en el texto. Si quieres pasar directamente a la parte técnica, puedes saltar al [apartado 0.6](#06-preparación-del-entorno-con-laradock), donde te guiaremos para preparar tu entorno de desarrollo con Laradock.
+No obstante, te ofrecemos [una presentación](documentos/backend_eac_presentacion.html) que puedes revisar para tener una visión general rápida antes de profundizar en el texto. Si quieres pasar directamente a la parte técnica, puedes saltar al [apartado 0.6](#06-preparación-del-entorno-con-laradock), donde te guiaremos para preparar tu entorno de desarrollo con Laradock.
 
 ## Objetivos de esta unidad
 
@@ -28,19 +28,19 @@ El **Vocational Federated Dataspace (VFDS)** es un espacio de datos federado esp
 
 ```
 ┌─────────────────────────────────────────────────────────────────┐
-│                  VOCATIONAL FEDERATED DATASPACE                 │
-│                                                                 │
-│   ┌───────────────┐   ┌───────────────┐   ┌───────────────┐    │
-│   │  Nodo Centro  │   │  Nodo Centro  │   │  Nodo Empresa │    │
-│   │  Educativo A  │   │  Educativo B  │   │    / RRHH     │    │
-│   │               │   │               │   │               │    │
-│   │ Backend EAC ◄─┼───┼─ Orion NGSI-LD┼───┼─► Catálogo   │    │
-│   │ (lo que vas   │   │               │   │               │    │
-│   │  a construir) │   │               │   │               │    │
-│   └───────────────┘   └───────────────┘   └───────────────┘    │
-│                                                                 │
-│            Servicios habilitadores comunes (FIWARE)             │
-│         Keyrock · Orion-LD · Wilma PEP Proxy · Catálogo        │
+│                  VOCATIONAL FEDERATED DATASPACE                             │
+│                                                                             │
+│   ┌────────────────┐   ┌───────────────┐   ┌───────────────┐       │
+│   │  Nodo Centro     │    │  Nodo Centro    │   │  Nodo Empresa    │       │
+│   │  Educativo A     │    │  Educativo B    │   │    / RRHH        │       │
+│   │                  │    │                 │   │                  │       │
+│   │ Backend EAC ◄───┼───┼─ Orion NGSI-LD──┼──┼─► Catálogo       │       │
+│   │ (lo que vas      │    │                 │   │                  │       │
+│   │  a construir)    │    │                 │   │                  │       │
+│   └────────────────┘   └───────────────┘   └───────────────┘       │
+│                                                                             │
+│            Servicios habilitadores comunes (FIWARE)                         │
+│         Keyrock · Orion-LD · Wilma PEP Proxy · Catálogo                     │
 └─────────────────────────────────────────────────────────────────┘
 ```
 
@@ -58,27 +58,27 @@ Su función es triple:
 
 ```
                         ┌──────────────────────────────────┐
-                        │        BACKEND EAC (Laravel)     │
-                        │                                  │
-    Docente/Estudiante  │  ┌─────────┐   ┌─────────────┐  │
-         ──────────────►│  │ Vistas  │   │  API REST   │  │
-                        │  │  Blade  │   │  /api/v1/   │  │
-                        │  └────┬────┘   └──────┬──────┘  │
-                        │       │               │          │
-                        │  ┌────▼───────────────▼──────┐  │
-                        │  │      Lógica de negocio     │  │
-                        │  │  Grafo · ZDP · Evaluación  │  │
-                        │  └────────────┬───────────────┘  │
-                        │               │                  │
+                        │        BACKEND EAC (Laravel)           │
+                        │                                        │
+    Docente/Estudiante  │  ┌─────────┐   ┌─────────────┐    │
+         ──────────────►│  Vistas   │   │  API REST     │    │
+                        │  │  Blade    │   │  /api/v1/     │    │
+                        │  └────┬────┘   └──────┬──────┘    │
+                        │        │                 │             │
+                        │  ┌────▼───────────────▼──────┐   │
+                        │  │      Lógica de negocio          │   │
+                        │  │  Grafo · ZDP · Evaluación       │   │
+                        │  └────────────┬───────────────┘   │
+                        │                 │                      │
                         │  ┌────────────▼───────────────┐  │
-                        │  │  MariaDB (base de datos)    │  │
-                        │  └────────────────────────────┘  │
+                        │  │  MariaDB (base de datos)        │   │
+                        │  └────────────────────────────┘   │
                         └──────────────┬───────────────────┘
-                                       │ HTTP (NGSI-LD)
-                                       ▼
+                                          │ HTTP (NGSI-LD)
+                                          ▼
                         ┌──────────────────────────────────┐
-                        │   Nodo FIWARE (ya desplegado)    │
-                        │  Orion-LD · Keyrock · Wilma PEP  │
+                        │   Nodo FIWARE (ya desplegado)          │
+                        │  Orion-LD · Keyrock · Wilma PEP        │
                         └──────────────────────────────────┘
 ```
 
@@ -154,8 +154,8 @@ Es la **estructura matemática** que define las dependencias entre SCs. Si para 
 
 ```
 SC-01 ──────► SC-03
-              ▲
-SC-02 ────────┘
+                 ▲
+SC-02 ─────────┘
 
 SC-01 y SC-02 son requisitos de SC-03.
 Un estudiante no puede acceder a SC-03 si no ha superado ambas.
@@ -218,40 +218,40 @@ La unión de todas las SCs con sus requisitos y umbrales genera el grafo. Este g
 ### Componentes y su relación
 
 ```
-┌─────────────────────────────────────────────────────────────────────┐
-│                        BACKEND EAC (Laravel)                        │
-│                                                                     │
+┌───────────────────────────────────────────────────────────────────┐
+│                        BACKEND EAC (Laravel)                                  │
+│                                                                               │
 │  ┌──────────────────┐  ┌──────────────────┐  ┌──────────────────┐  │
-│  │  Unidad 2        │  │  Unidades 3-4    │  │  Unidades 5-7    │  │
-│  │  Vistas Blade    │  │  API REST        │  │  Lógica de       │  │
-│  │  Layout          │  │  /api/v1/        │  │  negocio EAC     │  │
-│  │  Marketplace     │  │  Autenticación   │  │  Grafo · ZDP     │  │
-│  │  Dashboard       │  │  OAuth2/Keyrock  │  │  Evaluación      │  │
-│  └────────┬─────────┘  └────────┬─────────┘  └────────┬─────────┘  │
-│           │                     │                     │             │
-│  ┌────────▼─────────────────────▼─────────────────────▼─────────┐  │
-│  │                    Unidad 1: Modelos Eloquent                  │  │
-│  │  EcosistemaLaboral · SituacionCompetencia · NodoRequisito      │  │
-│  │  PerfilHabilitacion · GrafoPrecedencia · HuellaTalento        │  │
+│  │  Unidad 2           │  │  Unidades 3-4       │  │  Unidades 5-7        │  │
+│  │  Vistas Blade       │  │  API REST           │  │  Lógica de           │  │
+│  │  Layout             │  │  /api/v1/           │  │  negocio EAC         │  │
+│  │  Marketplace        │  │  Autenticación      │  │  Grafo · ZDP         │  │
+│  │  Dashboard          │  │  OAuth2/Keyrock     │  │  Evaluación          │  │
+│  └────────┬─────────┘  └────────┬─────────┘  └────────┬─────────┘   │
+│             │                        │                         │              │
+│  ┌────────▼─────────────────────▼─────────────────────▼─────────┐ │
+│  │                    Unidad 1: Modelos Eloquent                            │  │
+│  │  EcosistemaLaboral · SituacionCompetencia · NodoRequisito                │  │
+│  │  PerfilHabilitacion · GrafoPrecedencia · HuellaTalento                   │  │
 │  └──────────────────────────────┬────────────────────────────────┘  │
-│                                 │                                   │
-│  ┌──────────────────────────────▼────────────────────────────────┐  │
-│  │                    MySQL (base de datos local)                 │  │
+│                                       │                                        │
+│  ┌──────────────────────────────▼────────────────────────────────┐ │
+│  │                    MySQL (base de datos local)                            │ │
 │  └───────────────────────────────────────────────────────────────┘  │
-│                                                                     │
+│                                                                                 │
 │  ┌───────────────────────────────────────────────────────────────┐  │
-│  │  Unidad 6: Servicio FIWARE (OrionService)                     │  │
-│  │  Publica entidades NGSI-LD en el Context Broker externo       │  │
+│  │  Unidad 6: Servicio FIWARE (OrionService)                                │  │
+│  │  Publica entidades NGSI-LD en el Context Broker externo                  │  │
 │  └──────────────────────────────┬────────────────────────────────┘  │
 └─────────────────────────────────┼───────────────────────────────────┘
-                                  │ HTTP/NGSI-LD
-                      ┌───────────▼───────────────┐
-                      │  Nodo FIWARE (desplegado)  │
-                      │                           │
-                      │  Orion-LD :1026           │
-                      │  Keyrock  :3000           │
-                      │  Wilma PEP:1027           │
-                      └───────────────────────────┘
+                                        │ HTTP/NGSI-LD
+                      ┌──────────────▼───────────────┐
+                      │  Nodo FIWARE (desplegado)          │
+                      │                                    │
+                      │  Orion-LD :1026                    │
+                      │  Keyrock  :3000                    │
+                      │  Wilma PEP:1027                    │
+                      └──────────────────────────────┘
 ```
 
 ### Stack tecnológico
