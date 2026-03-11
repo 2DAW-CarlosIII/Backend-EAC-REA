@@ -2,15 +2,22 @@
 
 ## Índice de la práctica guiada
 
-| Unidad | Título |
-|--------|--------|
-| [0](./00_contexto_arquitectura_eac.md) | [Contexto y arquitectura EAC](./00_contexto_arquitectura_eac.md) |
-| [1](./01_modelado_datos_eac.md) | [Modelado de datos EAC en Laravel](./01_modelado_datos_eac.md) |
-| [2](./02_frontend_layout.md) | [Frontend: layout y vistas Blade para el marketplace](./02_frontend_layout.md) |
-| [3](./03_api_rest.md) | [API REST EAC](./03_api_rest.md) |
-| [4](./04_autenticacion.md) | [Autenticación con Sanctum + Keyrock](./04_autenticacion.md) |
-| [5](./05_motor_navegacion.md) | [Motor de navegación: ZDP y recomendación](./05_motor_navegacion.md) |
-| [6](./06_sincronizacion.md) | [Sincronización con FIWARE Orion](./06_sincronizacion.md) |
-| [7](./07_evaluacion.md) | [Evaluación y Huella de Talento](./07_evaluacion.md) |
-| [8](./08_visualizacion.md) | [Visualización del espacio competencial](./08_visualizacion.md) |
-| [9](./09_testing.md) | [Testing](./09_testing.md) |
+| Unidad  | Título | |
+|--------|--------|--------|
+| [0](./00_contexto_arquitectura_eac.md) | | [Contexto y arquitectura EAC](./00_contexto_arquitectura_eac.md) |
+| [1](./01_modelado_datos_eac.md) |  | [Modelado de datos EAC en Laravel](./01_modelado_datos_eac.md) |
+|     | [1.1](./01_01_migraciones.md) | [Migraciones: estructura de la base de datos](./01_01_migraciones.md) |
+|     | [1.2](./01_02_instalacion_inicial.md) | [Instalaciones iniciales](./01_02_instalacion_inicial.md) |
+|     | [1.3](./01_03_migraciones.md) | [Migraciones](./01_03_migraciones.md) |
+|     | [1.8](./01_08_modelos.md) | [Modelos Eloquent](./01_08_modelos.md) |
+|     | [1.9](./01_09_factories_seeders.md) | [Factories y Seeders](./01_09_factories_seeders.md) |
+|     | [1.10](./01_10_verifica_tinker.md) | [Verificación con Tinker](./01_10_verifica_tinker.md) |
+|     | [1.11](./01_11_soluciones.md) | [Soluciones](./01_11_soluciones.md) |
+| [2](./02_frontend_layout.md) |  | [Frontend: layout y vistas Blade para el marketplace](./02_frontend_layout.md) |
+| [3](./03_api_rest.md) |  | [API REST EAC](./03_api_rest.md) |
+| [4](./04_autenticacion.md) |  | [Autenticación con Sanctum + Keyrock](./04_autenticacion.md) |
+| [5](./05_motor_navegacion.md) |  | [Motor de navegación: ZDP y recomendación](./05_motor_navegacion.md) |
+| [6](./06_sincronizacion.md) |  | [Sincronización con FIWARE Orion](./06_sincronizacion.md) |
+| [7](./07_evaluacion.md) |  | [Evaluación y Huella de Talento](./07_evaluacion.md) |
+| [8](./08_visualizacion.md) |  | [Visualización del espacio competencial](./08_visualizacion.md) |
+| [9](./09_testing.md) |  | [Testing](./09_testing.md) |

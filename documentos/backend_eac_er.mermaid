@@ -48,7 +48,7 @@ erDiagram
 
     RESULTADOS_APRENDIZAJE {
         bigint id PK
-        bigint ecosistema_laboral_id FK
+        bigint modulo_id FK
         varchar codigo
         text descripcion
         decimal peso_porcentaje
@@ -141,7 +141,7 @@ erDiagram
     MATRICULAS {
         bigint id PK
         bigint estudiante_id FK
-        bigint ecosistema_laboral_id FK
+        bigint modulo_id FK
         timestamp created_at
         timestamp updated_at
     }
@@ -187,7 +187,7 @@ erDiagram
     FAMILIAS_PROFESIONALES ||--o{ CICLOS_FORMATIVOS         : "tiene"
     CICLOS_FORMATIVOS      ||--o{ MODULOS                   : "contiene"
     MODULOS                ||--o{ ECOSISTEMAS_LABORALES     : "tiene"
-    ECOSISTEMAS_LABORALES  ||--o{ RESULTADOS_APRENDIZAJE    : "define"
+    MODULOS  ||--o{ RESULTADOS_APRENDIZAJE    : "define"
     RESULTADOS_APRENDIZAJE ||--o{ CRITERIOS_EVALUACION      : "se_evalua_con"
 
     %% Núcleo EAC
@@ -203,7 +203,7 @@ erDiagram
     ROLES                  ||--o{ USER_ROLES               : "asignado_a"
     ECOSISTEMAS_LABORALES  ||--o{ USER_ROLES               : "contexto"
     USERS                  ||--o{ MATRICULAS               : "matriculado_en"
-    ECOSISTEMAS_LABORALES  ||--o{ MATRICULAS               : "tiene_matriculas"
+    MODULOS  ||--o{ MATRICULAS               : "tiene_matriculas"
 
     %% Estado competencial
     USERS                    ||--o{ PERFILES_HABILITACION    : "tiene"
