@@ -2,9 +2,18 @@
 
 En primer lugar, asegúrate de tener la última versión de `node` y `npm` para evitar problemas de compatibilidad. [notas de actualización](https://nodejs.org/en/download/).
 
-Añade los colores que vamos a utilizar en `@theme` del fichero `resources/css/app.css`:
+Modifica el fichero `resources/css/app.css` con el siguiente contenido:
 
 ```css
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@source '../../vendor/laravel/framework/src/Illuminate/Pagination/resources/views/*.blade.php';
+@source '../../storage/framework/views/*.php';
+@source '../**/*.blade.php';
+@source '../**/*.js';
+
 @theme {
     --font-sans: 'Instrument Sans', ui-sans-serif, system-ui, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji',
         'Segoe UI Symbol', 'Noto Color Emoji';

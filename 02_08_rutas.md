@@ -1,5 +1,7 @@
 ## 2.8. Rutas
 
+Genera el resto de las rutas de la aplicación, organizándolas en grupos con middleware de autenticación y nombrado consistente. Puedes usar el siguiente código como referencia, adaptándolo a los controladores y vistas que hayas creado en esta unidad:
+
 ```php
 // routes/web.php
 
@@ -37,6 +39,20 @@ Route::middleware(['auth', 'role:docente'])
         Route::get('/ecosistemas/{ecosistema}', Docente\EcosistemaController::class)->name('ecosistemas.show');
         Route::get('/progreso/{ecosistema}',    Docente\ProgresoController::class)->name('progreso.show');
     });
+
+// Rutas de autenticación (generadas por Breeze)
+
+Route::get('/dashboard', function () {
+    return view('dashboard');
+})->middleware(['auth', 'verified'])->name('dashboard');
+
+Route::middleware('auth')->group(function () {
+    Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
+    Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
+    Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
+});
+
+require __DIR__.'/auth.php';
 ```
 
 ---

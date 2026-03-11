@@ -35,10 +35,10 @@ resources/views/
         └── show.blade.php
 ```
 
-### 2.3.2. `layouts/app.blade.php`
+### 2.3.2. `layouts/eac.blade.php`
 
 ```blade
-{{-- resources/views/layouts/app.blade.php --}}
+{{-- resources/views/layouts/eac.blade.php --}}
 <!DOCTYPE html>
 <html lang="es" class="h-full bg-vfds-surface">
 <head>
@@ -142,11 +142,30 @@ resources/views/
 </nav>
 ```
 
-### 2.3.4. Layouts de panel
+### 2.3.4. Componente footer
+
+```blade
+{{-- resources/views/components/footer.blade.php --}}
+<footer class="bg-white border-t border-gray-200">
+    <div class="max-w-7xl mx-auto px-4 py-6 flex flex-col sm:flex-row justify-between items-center text-sm text-gray-600">
+        <div class="text-center sm:text-left">
+            © {{ now()->year }} VFDS — Backend EAC. Todos los derechos reservados.
+        </div>
+
+        <div class="mt-3 sm:mt-0 flex items-center space-x-4">
+            <a href="{{ route('publico.portada') }}" class="text-vfds-primary hover:underline">Inicio</a>
+            <a href="{{ route('publico.modulos.index') }}" class="text-vfds-primary hover:underline">Catálogo</a>
+            <a href="/legal" class="text-vfds-primary hover:underline">Aviso legal</a>
+        </div>
+    </div>
+</footer>
+```
+
+### 2.3.5. Layouts de panel
 
 ```blade
 {{-- resources/views/layouts/estudiante.blade.php --}}
-@extends('layouts.app')
+@extends('layouts.eac')
 
 @section('content')
 <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
@@ -180,7 +199,7 @@ resources/views/
 
 ```blade
 {{-- resources/views/layouts/docente.blade.php --}}
-@extends('layouts.app')
+@extends('layouts.eac')
 
 @section('content')
 <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
@@ -207,7 +226,7 @@ resources/views/
 @endsection
 ```
 
-### 2.3.5. Componente `gradiente-badge`
+### 2.3.6. Componente `gradiente-badge`
 
 ```blade
 {{-- resources/views/components/gradiente-badge.blade.php --}}

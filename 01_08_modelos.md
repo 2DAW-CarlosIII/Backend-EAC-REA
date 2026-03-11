@@ -14,6 +14,7 @@ php artisan make:model NodoRequisito
 php artisan make:model Role
 php artisan make:model Matricula
 php artisan make:model PerfilHabilitacion
+php artisan make:model PerfilSituacion
 php artisan make:model HuellaTalento
 ```
 
@@ -83,6 +84,11 @@ class Modulo extends Model
     {
         return $this->hasMany(EcosistemaLaboral::class);
     }
+
+    public function resultadosAprendizaje(): HasMany
+    {
+        return $this->hasMany(ResultadoAprendizaje::class);
+    }
 }
 ```
 
@@ -104,11 +110,6 @@ class EcosistemaLaboral extends Model
     public function modulo(): BelongsTo
     {
         return $this->belongsTo(Modulo::class);
-    }
-
-    public function resultadosAprendizaje(): HasMany
-    {
-        return $this->hasMany(ResultadoAprendizaje::class);
     }
 
     public function situacionesCompetencia(): HasMany
@@ -326,7 +327,28 @@ class PerfilHabilitacion extends Model
 }
 ```
 
-### 1.8.11. HuellaTalento
+### 1.8.11. PerfilSituacion (tabla pivote)
+
+```php
+// app/Models/PerfilSituacion.php
+class PerfilSituacion extends Pivot
+{
+    protected $table = 'perfil_situacion';
+
+    protected $fillable = [
+        'perfil_habilitacion_id', 'situacion_competencia_id',
+        'gradiente_autonomia', 'puntuacion_conquista', 'intentos', 'fecha_conquista',
+    ];
+
+    protected $casts = [
+        'gradiente_autonomia' => 'decimal:2',
+        'puntuacion_conquista' => 'decimal:2',
+        'fecha_conquista' => 'datetime',
+    ];
+}
+```
+
+### 1.8.12. HuellaTalento
 
 ```php
 // app/Models/HuellaTalento.php

@@ -38,6 +38,34 @@ DOCENTE (autenticado con rol docente)
 /docente/progreso/{id}     Progreso del grupo en un ecosistema
 ```
 
+> Como en las vistas se utilizan rutas de autenticación (`route('login')`, `route('register')`) y algunas rutas requieren autenticación, es necesario incluir el sistema de autenticación de _Breeze_ para poder probar las vistas generadas en esta unidad. Ejecuta los siguientes comandos para generar las rutas, controladores y vistas de login y registro:
+
+```bash
+composer require laravel/breeze --dev
+php artisan breeze:install
+```
+
+Elige las siguientes opciones en el proceso de instalación:
+
+```
+ ┌ Which Breeze stack would you like to install? ───────────────┐
+ │ › ● Blade with Alpine                                           │
+ │   ○ Livewire (Volt Class API) with Alpine                       │
+ │   ○ Livewire (Volt Functional API) with Alpine                  │
+ │   ○ React with Inertia                                          │
+ │   ○ Vue with Inertia                                            │
+ │   ○ API only                                                    │
+ └───────────────────────────────────────────────────────┘
+
+ ┌ Would you like dark mode support? ─────────────────────────┐
+ │ ○ Yes / ● No                                                    │
+ └───────────────────────────────────────────────────────┘
+
+ ┌ Which testing framework do you prefer? ─────────────────────┐
+ │ PHPUnit                                                         │
+ └───────────────────────────────────────────────────────┘
+```
+
 ---
 
 **Unidad anterior ←** [Unidad 1: Modelado de datos EAC en Laravel](./01_modelado_datos_eac.md)
