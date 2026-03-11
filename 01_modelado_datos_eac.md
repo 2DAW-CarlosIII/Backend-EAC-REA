@@ -132,7 +132,7 @@ public function up(): void
               ->cascadeOnDelete();
         $table->string('nombre');
         $table->string('codigo', 10)->unique();
-        $table->enum('grado', ['basico', 'medio', 'superior']);
+        $table->enum('grado', ['GB','GM','GS','CE']);
         $table->text('descripcion')->nullable();
         $table->timestamps();
     });
@@ -153,8 +153,9 @@ public function up(): void
     Schema::create('modulos', function (Blueprint $table) {
         $table->id();
         $table->foreignId('ciclo_formativo_id')
-              ->constrained('ciclos_formativos')
-              ->cascadeOnDelete();
+            ->nullable()
+            ->constrained('ciclos_formativos')
+            ->cascadeOnDelete();
         $table->string('nombre');
         $table->string('codigo', 20);             // Ej: "0614"
         $table->unsignedSmallInteger('horas_totales')->default(0);
@@ -204,16 +205,14 @@ public function up(): void
 {
     Schema::create('resultados_aprendizaje', function (Blueprint $table) {
         $table->id();
-        $table->foreignId('ecosistema_laboral_id')
-              ->constrained('ecosistemas_laborales')
-              ->cascadeOnDelete();
-        $table->string('codigo', 20);             // Ej: "RA1", "RA2"
+        $table->foreignId('modulo_id')
+            ->constrained('modulos')
+            ->cascadeOnDelete();
+        $table->string('codigo', 5);             // Ej: "RA1", "RA2"
         $table->text('descripcion');
-        $table->decimal('peso_porcentaje', 5, 2)->default(0);
-        $table->unsignedSmallInteger('orden')->default(0);
         $table->timestamps();
 
-        $table->unique(['ecosistema_laboral_id', 'codigo']);
+        $table->unique(['modulo_id', 'codigo']);
     });
 }
 ```
@@ -232,10 +231,8 @@ public function up(): void
         $table->foreignId('resultado_aprendizaje_id')
               ->constrained('resultados_aprendizaje')
               ->cascadeOnDelete();
-        $table->string('codigo', 20);             // Ej: "CE1a", "CE1b"
+        $table->string('codigo', 5);             // Ej: "CE1a", "CE1b"
         $table->text('descripcion');
-        $table->decimal('peso_porcentaje', 5, 2)->default(0);
-        $table->unsignedSmallInteger('orden')->default(0);
         $table->timestamps();
 
         $table->unique(['resultado_aprendizaje_id', 'codigo']);
@@ -429,14 +426,14 @@ public function up(): void
     Schema::create('matriculas', function (Blueprint $table) {
         $table->id();
         $table->foreignId('estudiante_id')
-              ->constrained('users')
-              ->cascadeOnDelete();
-        $table->foreignId('ecosistema_laboral_id')
-              ->constrained('ecosistemas_laborales')
-              ->cascadeOnDelete();
+            ->constrained('users')
+            ->cascadeOnDelete();
+        $table->foreignId('modulo_id')
+            ->constrained('modulos')
+            ->cascadeOnDelete();
         $table->timestamps();
 
-        $table->unique(['estudiante_id', 'ecosistema_laboral_id']);
+        $table->unique(['estudiante_id', 'modulo_id']);
     });
 }
 ```
@@ -586,6 +583,7 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 class FamiliaProfesional extends Model
 {
     protected $fillable = ['nombre', 'codigo', 'descripcion'];
+    protected $table = 'familias_profesionales';
 
     public function ciclosFormativos(): HasMany
     {
@@ -602,6 +600,7 @@ class FamiliaProfesional extends Model
 class CicloFormativo extends Model
 {
     protected $fillable = ['familia_profesional_id', 'nombre', 'codigo', 'grado', 'descripcion'];
+    protected $table = 'ciclos_formativos';
 
     public function familiaProfesional(): BelongsTo
     {
@@ -649,6 +648,8 @@ class EcosistemaLaboral extends Model
         'modulo_id', 'nombre', 'codigo', 'descripcion', 'activo',
     ];
 
+    protected $table = 'ecosistemas_laborales';
+
     protected $casts = ['activo' => 'boolean'];
 
     public function modulo(): BelongsTo
@@ -686,13 +687,13 @@ class EcosistemaLaboral extends Model
 class ResultadoAprendizaje extends Model
 {
     protected $fillable = [
-        'ecosistema_laboral_id', 'codigo', 'descripcion',
-        'peso_porcentaje', 'orden',
+        'modulo_id', 'codigo', 'descripcion',
     ];
+    protected $table = 'resultados_aprendizaje';
 
-    public function ecosistemaLaboral(): BelongsTo
+    public function modulo(): BelongsTo
     {
-        return $this->belongsTo(EcosistemaLaboral::class);
+        return $this->belongsTo(Modulo::class);
     }
 
     public function criteriosEvaluacion(): HasMany
@@ -711,8 +712,8 @@ class CriterioEvaluacion extends Model
 {
     protected $fillable = [
         'resultado_aprendizaje_id', 'codigo', 'descripcion',
-        'peso_porcentaje', 'orden',
     ];
+    protected $table = 'criterios_evaluacion';
 
     public function resultadoAprendizaje(): BelongsTo
     {
@@ -761,6 +762,7 @@ class NodoRequisito extends Model
     protected $fillable = [
         'situacion_competencia_id', 'tipo', 'descripcion', 'orden',
     ];
+    protected $table = 'nodos_requisito';
 
     public function situacionCompetencia(): BelongsTo
     {
@@ -778,12 +780,6 @@ Añade las relaciones EAC al modelo `User` existente:
 
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
-
-// Roles del usuario (con contexto de ecosistema)
-public function userRoles(): HasMany
-{
-    return $this->hasMany(UserRole::class);
-}
 
 public function roles(): BelongsToMany
 {
@@ -821,6 +817,16 @@ public function perfilEn(EcosistemaLaboral $ecosistema): ?PerfilHabilitacion
 }
 ```
 
+Modelo `Role`:
+
+```php
+// app/Models/Role.php
+class Role extends Model
+{
+    protected $fillable = ['name', 'description'];
+}
+```
+
 ### 1.8.10. PerfilHabilitacion
 
 ```php
@@ -831,6 +837,7 @@ class PerfilHabilitacion extends Model
     protected $fillable = [
         'estudiante_id', 'ecosistema_laboral_id', 'calificacion_actual',
     ];
+    protected $table = 'perfiles_habilitacion';
 
     protected $casts = ['calificacion_actual' => 'decimal:2'];
 
@@ -881,6 +888,8 @@ class HuellaTalento extends Model
         'estudiante_id', 'ecosistema_laboral_id',
         'payload', 'ngsi_ld_id', 'generada_en',
     ];
+
+    protected $table = 'huellas_talento';
 
     protected $casts = [
         'payload'      => 'array',
@@ -936,9 +945,9 @@ public function definition(): array
 
 En el repositorio de este REA en GitHub, puedes encontrar [ficheros _CSV_](https://github.com/2DAW-CarlosIII/Backend-EAC-REA/tree/master/documentos/seeders) con datos reales de familias profesionales, ciclos formativos, módulos formativos, resultados de aprendizaje y criterios de evaluación, preparados para alimentar la base de datos.
 
-1) Copia los _CSV_ al directorio `storage/seeders` de la aplicación _Laravel_:
+1) Copia los _CSV_ al directorio `database/seeders/csv` de la aplicación _Laravel_:
 
-(Usamos `storage/seeders` para mantener los CSV de importación dentro del proyecto.
+(Usamos `database/seeders/csv` para mantener los CSV de importación dentro del proyecto.
 
 2) Crear el seeder:
 
@@ -951,7 +960,7 @@ php artisan make:seeder FamiliasProfesionalesSeeder
 ```php
 public function run(): void
 {
-    $path = storage_path('seeders/familias.csv');
+    $path = database_path('seeders/csv/familias_profesionales.csv');
 
     if (!file_exists($path)) {
         $this->command->error("CSV no encontrado: $path");
@@ -998,13 +1007,20 @@ public function run(): void
 Notas y recomendaciones:
 
 - Asegúrate de que el CSV tenga una cabecera con, al menos, las columnas `nombre` y `codigo`.
-- Si el fichero contiene BOM u otros problemas de codificación, normaliza a UTF-8 antes de importarlo.
 - Usa `upsert()` con la columna `codigo` para poder ejecutar el seeder repetidas veces sin duplicar registros.
 - Valida y limpia los campos (trim, casts) antes de insertar.
 
 ### 1.9.3. Crear seeders para ciclos, módulos, RA y CE
 
-Repite el proceso anterior para cada entidad (CicloFormativo, Modulo, ResultadoAprendizaje, CriterioEvaluacion), creando un seeder específico para cada una y adaptando el código de importación al formato de su CSV correspondiente. Asegúrate de respetar las relaciones entre entidades (por ejemplo, al importar módulos, debes relacionarlos con el ciclo formativo correcto).
+Repite el proceso anterior para cada entidad (CicloFormativo, Modulo, ResultadoAprendizaje, CriterioEvaluacion), creando un seeder específico para cada una y adaptando el código de importación al formato de su CSV correspondiente. Tendrás que adaptar las claves del array `$data` a los campos de cada tabla.
+
+Asegúrate de respetar las relaciones entre entidades (por ejemplo, al importar módulos, debes relacionarlos con el ciclo formativo correcto).
+
+Las soluciones completas para cada seeder se pueden encontrar en el apartado Soluciones:
+- [CiclosFormativosSeeder](#seeder-ciclosformativosseeder)
+- [ModulosSeeder](#seeder-modulosseeder)
+- [ResultadosAprendizajeSeeder](#seeder-resultadosaprendizajeseeder)
+- [CriteriosEvaluacionSeeder](#seeder-criteriosevaluacionseeder)
 
 ### 1.9.4. Seeders del módulo piloto
 
@@ -1017,83 +1033,70 @@ php artisan make:seeder EcosistemaLaboralSeeder
 
 public function run(): void
 {
+    Schema::disableForeignKeyConstraints(); // Deshabilitar temporalmente las restricciones de clave foránea
     // 1. Jerarquía curricular
-    $familia = FamiliaProfesional::create([
+    $familia = FamiliaProfesional::where([
         'nombre'  => 'Comercio y Marketing',
         'codigo'  => 'COM',
-    ]);
+    ])->first();
 
-    $ciclo = CicloFormativo::create([
+    $ciclo = CicloFormativo::where([
         'familia_profesional_id' => $familia->id,
-        'nombre'  => 'Actividades Comerciales',
-        'codigo'  => 'AC',
-        'grado'   => 'medio',
-    ]);
+        'nombre'  => 'Servicios Comerciales',
+    ])->first();
 
-    $modulo = Modulo::create([
+    $modulo = Modulo::where([
         'ciclo_formativo_id' => $ciclo->id,
-        'nombre'             => 'Técnicas Básicas de Merchandising',
-        'codigo'             => '0614',
-        'horas_totales'      => 96,
-    ]);
+        'nombre'             => 'Técnicas básicas de merchandising',
+    ])->first();
 
+
+    DB::table('huellas_talento')->truncate(); // Limpiar huellas anteriores para evitar duplicados
+    EcosistemaLaboral::truncate(); // Limpiar ecosistemas anteriores para evitar duplicados
     $ecosistema = EcosistemaLaboral::create([
         'modulo_id' => $modulo->id,
-        'nombre'    => 'Técnicas Básicas de Merchandising',
+        'nombre'    => $modulo->nombre,
         'codigo'    => 'AC-TBM',
         'activo'    => true,
     ]);
 
     // 2. Resultados de Aprendizaje y Criterios de Evaluación
-    $ra1 = ResultadoAprendizaje::create([
-        'ecosistema_laboral_id' => $ecosistema->id,
+    $ra1 = ResultadoAprendizaje::where([
+        'modulo_id' => $modulo->id,
         'codigo'      => 'RA1',
-        'descripcion' => 'Organiza productos en el punto de venta aplicando técnicas de merchandising.',
-        'peso_porcentaje' => 40,
-        'orden'       => 1,
-    ]);
+    ])->first();
+        $ce1a = CriterioEvaluacion::where([
+            'resultado_aprendizaje_id' => $ra1->id,
+            'codigo'      => 'a',
+        ])->first();
+        $ce1b = CriterioEvaluacion::where([
+            'resultado_aprendizaje_id' => $ra1->id,
+            'codigo'      => 'b',
+        ])->first();
+        $ce1c = CriterioEvaluacion::where([
+            'resultado_aprendizaje_id' => $ra1->id,
+            'codigo'      => 'c',
+        ])->first();
 
-    $ce1a = CriterioEvaluacion::create([
-        'resultado_aprendizaje_id' => $ra1->id,
-        'codigo'      => 'CE1a',
-        'descripcion' => 'Se han descrito los principios del visual merchandising.',
-        'peso_porcentaje' => 30, 'orden' => 1,
-    ]);
-    $ce1b = CriterioEvaluacion::create([
-        'resultado_aprendizaje_id' => $ra1->id,
-        'codigo'      => 'CE1b',
-        'descripcion' => 'Se han identificado las zonas calientes y frías del punto de venta.',
-        'peso_porcentaje' => 40, 'orden' => 2,
-    ]);
-    $ce1c = CriterioEvaluacion::create([
-        'resultado_aprendizaje_id' => $ra1->id,
-        'codigo'      => 'CE1c',
-        'descripcion' => 'Se ha elaborado un planograma básico para el lineal.',
-        'peso_porcentaje' => 30, 'orden' => 3,
-    ]);
-
-    $ra2 = ResultadoAprendizaje::create([
-        'ecosistema_laboral_id' => $ecosistema->id,
+    $ra2 = ResultadoAprendizaje::where([
+        'modulo_id' => $modulo->id,
         'codigo'      => 'RA2',
-        'descripcion' => 'Analiza el rendimiento del punto de venta mediante indicadores.',
-        'peso_porcentaje' => 35,
-        'orden'       => 2,
-    ]);
-
-    $ce2a = CriterioEvaluacion::create([
-        'resultado_aprendizaje_id' => $ra2->id,
-        'codigo'      => 'CE2a',
-        'descripcion' => 'Se han calculado índices de rotación de stock.',
-        'peso_porcentaje' => 50, 'orden' => 1,
-    ]);
-    $ce2b = CriterioEvaluacion::create([
-        'resultado_aprendizaje_id' => $ra2->id,
-        'codigo'      => 'CE2b',
-        'descripcion' => 'Se han identificado productos de baja rotación y propuesto acciones de mejora.',
-        'peso_porcentaje' => 50, 'orden' => 2,
-    ]);
+    ])->first();
+        $ce2a = CriterioEvaluacion::where([
+            'resultado_aprendizaje_id' => $ra2->id,
+            'codigo'      => 'a',
+        ])->first();
+        $ce2b = CriterioEvaluacion::where([
+            'resultado_aprendizaje_id' => $ra2->id,
+            'codigo'      => 'b',
+        ])->first();
+        $ce2c = CriterioEvaluacion::where([
+            'resultado_aprendizaje_id' => $ra2->id,
+            'codigo'      => 'c',
+        ])->first();
 
     // 3. Situaciones de Competencia
+    SituacionCompetencia::truncate(); // Limpiar SC anteriores para evitar duplicados
     $sc01 = SituacionCompetencia::create([
         'ecosistema_laboral_id' => $ecosistema->id,
         'codigo'      => 'SC-01',
@@ -1122,6 +1125,7 @@ public function run(): void
     ]);
 
     // 4. Trazabilidad curricular: qué CE cubre cada SC
+    DB::table('sc_criterios_evaluacion')->truncate(); // Limpiar trazabilidades anteriores para evitar duplicados
     $sc01->criteriosEvaluacion()->attach([
         $ce1a->id => ['peso_en_sc' => 30],
         $ce1b->id => ['peso_en_sc' => 40],
@@ -1138,29 +1142,32 @@ public function run(): void
     ]);
 
     // 5. Nodos de Requisito
+    NodoRequisito::truncate(); // Limpiar nodos anteriores para evitar duplicados
     NodoRequisito::insert([
         ['situacion_competencia_id' => $sc01->id, 'tipo' => 'conocimiento',
-         'descripcion' => 'Conocer los principios del color en escaparatismo', 'orden' => 1],
+        'descripcion' => 'Conocer los principios del color en escaparatismo', 'orden' => 1],
         ['situacion_competencia_id' => $sc01->id, 'tipo' => 'habilidad',
-         'descripcion' => 'Manejar software básico de diseño (Canva o similar)', 'orden' => 2],
+        'descripcion' => 'Manejar software básico de diseño (Canva o similar)', 'orden' => 2],
         ['situacion_competencia_id' => $sc02->id, 'tipo' => 'conocimiento',
-         'descripcion' => 'Conocer la estructura de un planograma', 'orden' => 1],
+        'descripcion' => 'Conocer la estructura de un planograma', 'orden' => 1],
         ['situacion_competencia_id' => $sc02->id, 'tipo' => 'habilidad',
-         'descripcion' => 'Manejar software de planogramas', 'orden' => 2],
+        'descripcion' => 'Manejar software de planogramas', 'orden' => 2],
         ['situacion_competencia_id' => $sc03->id, 'tipo' => 'conocimiento',
-         'descripcion' => 'Conocer los indicadores de rendimiento comercial (KPIs)', 'orden' => 1],
+        'descripcion' => 'Conocer los indicadores de rendimiento comercial (KPIs)', 'orden' => 1],
         ['situacion_competencia_id' => $sc03->id, 'tipo' => 'habilidad',
-         'descripcion' => 'Calcular el índice de rotación de stock', 'orden' => 2],
+        'descripcion' => 'Calcular el índice de rotación de stock', 'orden' => 2],
     ]);
 
     // 6. Grafo de Precedencia
     // SC-03 requiere haber conquistado SC-01 y SC-02
+    DB::table('sc_precedencia')->truncate(); // Limpiar precedencias anteriores para evitar duplicados
     DB::table('sc_precedencia')->insert([
         ['sc_id' => $sc03->id, 'sc_requisito_id' => $sc01->id],
         ['sc_id' => $sc03->id, 'sc_requisito_id' => $sc02->id],
     ]);
 
     // 7. Usuarios de prueba
+    User::truncate(); // Limpiar usuarios anteriores para evitar duplicados
     $docente = User::factory()->create([
         'name'  => 'Profesora Ejemplo',
         'email' => 'docente@backend-eac.test',
@@ -1171,27 +1178,33 @@ public function run(): void
         'email' => 'estudiante@backend-eac.test',
     ]);
 
+    Role::truncate(); // Limpiar roles anteriores para evitar duplicados
     $rolDocente    = Role::create(['name' => 'docente',    'description' => 'Docente del ecosistema']);
     $rolEstudiante = Role::create(['name' => 'estudiante', 'description' => 'Estudiante matriculado']);
 
     // Asignación de roles con contexto
+    DB::table('user_roles')->truncate(); // Limpiar asignaciones anteriores para evitar duplicados
     DB::table('user_roles')->insert([
         ['user_id' => $docente->id,    'role_id' => $rolDocente->id,    'ecosistema_laboral_id' => $ecosistema->id],
         ['user_id' => $estudiante->id, 'role_id' => $rolEstudiante->id, 'ecosistema_laboral_id' => $ecosistema->id],
     ]);
 
     // Matrícula
+    Matricula::truncate(); // Limpiar matrículas anteriores para evitar duplicados
     Matricula::create([
         'estudiante_id'        => $estudiante->id,
-        'ecosistema_laboral_id' => $ecosistema->id,
+        'modulo_id' => $modulo->id,
     ]);
 
     // Perfil de Habilitación inicial (vacío)
+    PerfilHabilitacion::truncate(); // Limpiar perfiles anteriores para evitar duplicados
     PerfilHabilitacion::create([
         'estudiante_id'        => $estudiante->id,
         'ecosistema_laboral_id' => $ecosistema->id,
         'calificacion_actual'  => 0.00,
     ]);
+
+    Schema::enableForeignKeyConstraints(); // Habilitar nuevamente las restricciones de clave foránea
 }
 ```
 
@@ -1205,10 +1218,9 @@ public function run(): void
     $this->call([
         FamiliasProfesionalesSeeder::class,
         CiclosFormativosSeeder::class,
-        ModulosSeeder::class,
+        ModulosFormativosSeeder::class,
         ResultadosAprendizajeSeeder::class,
         CriteriosEvaluacionSeeder::class,
-        EcosistemaLaboralSeeder::class,
     ]);
 }
 ```
@@ -1219,6 +1231,12 @@ Ejecuta:
 php artisan db:seed
 # o desde cero:
 php artisan migrate:fresh --seed
+```
+
+El seeder del módulo piloto (`EcosistemaLaboralSeeder`) no se llama desde `DatabaseSeeder` porque queremos poder ejecutarlo de forma independiente para no sobreescribir datos si lo ejecutamos varias veces.
+
+```bash
+php artisan db:seed --class=EcosistemaLaboralSeeder
 ```
 
 ---
@@ -1239,19 +1257,15 @@ App\Models\EcosistemaLaboral::first()->situacionesCompetencia()->count();
 // ¿Qué CE cubre SC-03?
 $sc03 = App\Models\SituacionCompetencia::where('codigo', 'SC-03')->first();
 $sc03->criteriosEvaluacion()->pluck('codigo');
-// → ['CE1b', 'CE2a', 'CE2b']
+// → ['b', 'a', 'b']
 
 // ¿Qué SCs son prerequisito de SC-03?
 $sc03->prerequisitos()->pluck('codigo');
 // → ['SC-01', 'SC-02']
 
 // ¿El estudiante tiene perfil creado?
-App\Models\User::where('email', 'estudiante@backend-eac.test')
-    ->first()
-    ->perfilesHabilitacion()
-    ->with('ecosistemaLaboral')
-    ->first();
-// → PerfilHabilitacion { ecosistema_laboral: EcosistemaLaboral { nombre: 'Técnicas Básicas de Merchandising' } }
+App\Models\User::where('email', 'estudiante@backend-eac.test')->first()->perfilesHabilitacion()->with('ecosistemaLaboral')->first();
+// → PerfilHabilitacion { ecosistema_laboral: EcosistemaLaboral { nombre: 'Técnicas básicas de merchandising' } }
 
 // ¿Qué SCs ha conquistado? (ninguna aún)
 App\Models\PerfilHabilitacion::first()->situacionesConquistadas()->count();
@@ -1375,6 +1389,252 @@ class SituacionCompetencia extends Model
         )->withPivot('peso_en_sc');
     }
 }
+```
+
+### Seeder `CiclosFormativosSeeder`
+
+```php
+    public function run(): void
+    {
+        $path = database_path('seeders/csv/ciclos.csv');
+
+        if (!file_exists($path)) {
+            $this->command->error("CSV no encontrado: $path");
+            return;
+        }
+
+        // Leer todas las líneas y parsear con str_getcsv
+        $rows = array_map('str_getcsv', file($path));
+
+        // El primer registro es la cabecera
+        $header = array_map('trim', array_shift($rows));
+
+        $data = [];
+        foreach ($rows as $row) {
+            // Ignorar filas vacías o mal formadas
+            if (count($row) < count($header)) {
+                continue;
+            }
+
+            $rec = array_combine($header, $row);
+
+            $data[] = [
+                'familia_profesional_id' => FamiliaProfesional::where('codigo', trim($rec['familia'] ?? ''))->first()->id,
+                'grado' => trim($rec['nivel'] ?? ''),
+                'codigo' => trim($rec['cod_ciclo'] ?? ''),
+                'nombre' => trim($rec['nombre'] ?? ''),
+                'created_at' => now(),
+                'updated_at' => now(),
+            ];
+        }
+
+        // Insertar/actualizar usando upsert para evitar duplicados por 'codigo'
+        DB::transaction(function () use ($data) {
+            foreach (array_chunk($data, 200) as $chunk) {
+                DB::table('ciclos_formativos')->upsert(
+                    $chunk,
+                    ['codigo'], // llave única para evitar duplicados
+                    ['nombre', 'descripcion', 'updated_at']
+                );
+            }
+        });
+    }
+```
+
+### Seeder `ModulosFormativosSeeder`
+
+```php
+    public function run(): void
+    {
+        // Deshabilitar temporalmente la verificación de claves foráneas para evitar errores al insertar módulos sin ciclos formativos existentes
+        Schema::disableForeignKeyConstraints();
+
+        $path = database_path('seeders/csv/modulos.csv');
+
+        if (!file_exists($path)) {
+            $this->command->error("CSV no encontrado: $path");
+            return;
+        }
+
+        // Leer todas las líneas y parsear con str_getcsv
+        $rows = array_map('str_getcsv', file($path));
+
+        // El primer registro es la cabecera
+        $header = array_map('trim', array_shift($rows));
+
+        $data = [];
+        foreach ($rows as $row) {
+            // Ignorar filas vacías o mal formadas
+            if (count($row) < count($header)) {
+                continue;
+            }
+
+            $rec = array_combine($header, $row);
+
+            $data[] = [
+                'codigo' => trim($rec['cod_modulo'] ?? ''),
+                'nombre' => trim($rec['nombre_modulo'] ?? ''),
+                'created_at' => now(),
+                'updated_at' => now(),
+            ];
+        }
+
+        // Insertar/actualizar usando upsert para evitar duplicados por 'codigo'
+        DB::transaction(function () use ($data) {
+            foreach (array_chunk($data, 200) as $chunk) {
+                DB::table('modulos')->upsert(
+                    $chunk,
+                    ['codigo'], // llave única para evitar duplicados
+                    ['nombre', 'descripcion', 'updated_at']
+                );
+            }
+        });
+
+        $path = database_path('seeders/csv/ciclo_modulo_relaciones.csv');
+
+        if (!file_exists($path)) {
+            $this->command->error("CSV no encontrado: $path");
+            return;
+        }
+
+        // Leer todas las líneas y parsear con str_getcsv
+        $rows = array_map('str_getcsv', file($path));
+
+        // El primer registro es la cabecera
+        $header = array_map('trim', array_shift($rows));
+
+        $data = [];
+        foreach ($rows as $row) {
+            // Ignorar filas vacías o mal formadas
+            if (count($row) < count($header)) {
+                continue;
+            }
+
+            $rec = array_combine($header, $row);
+
+            $ciclo = CicloFormativo::where('codigo', trim($rec['cod_ciclo'] ?? ''))->first();
+            if (!$ciclo) {
+                $this->command->error("Ciclo formativo no encontrado para código: " . trim($rec['cod_ciclo'] ?? ''));
+                continue;
+            }
+
+            Modulo::where('codigo', trim($rec['cod_modulo'] ?? ''))->update([
+                'ciclo_formativo_id' => $ciclo->id,
+            ]);
+        }
+
+        Schema::enableForeignKeyConstraints();
+    }
+```
+
+### Seeder `ResultadosAprendizajeSeeder`
+
+```php
+    public function run(): void
+    {
+        $path = database_path('seeders/csv/resultados_aprendizaje.csv');
+
+        if (!file_exists($path)) {
+            $this->command->error("CSV no encontrado: $path");
+            return;
+        }
+
+        // Leer todas las líneas y parsear con str_getcsv
+        $rows = array_map('str_getcsv', file($path));
+
+        // El primer registro es la cabecera
+        $header = array_map('trim', array_shift($rows));
+
+        $data = [];
+        foreach ($rows as $row) {
+            // Ignorar filas vacías o mal formadas
+            if (count($row) < count($header)) {
+                continue;
+            }
+
+            $rec = array_combine($header, $row);
+
+            $data[] = [
+                'modulo_id' => DB::table('modulos')->where('codigo', trim($rec['cod_modulo'] ?? ''))->value('id'),
+                'codigo' => "RA" . trim($rec['id_ra'] ?? ''),
+                'descripcion' => $rec['definicion'] ?? null,
+                'created_at' => now(),
+                'updated_at' => now(),
+            ];
+        }
+
+        // Insertar/actualizar usando upsert para evitar duplicados por 'codigo'
+        DB::transaction(function () use ($data) {
+            foreach (array_chunk($data, 200) as $chunk) {
+                DB::table('resultados_aprendizaje')->upsert(
+                    $chunk,
+                    ['modulo_id', 'codigo'], // llave única para evitar duplicados
+                    ['descripcion', 'updated_at']
+                );
+            }
+        });
+    }
+```
+
+### Seeder `CriteriosEvaluacionSeeder`
+
+```php
+    public function run(): void
+    {
+        $path = database_path('seeders/csv/criterios_evaluacion.csv');
+
+        if (!file_exists($path)) {
+            $this->command->error("CSV no encontrado: $path");
+            return;
+        }
+
+        // Leer todas las líneas y parsear con str_getcsv
+        $rows = array_map('str_getcsv', file($path));
+
+        // El primer registro es la cabecera
+        $header = array_map('trim', array_shift($rows));
+        $data = [];
+        foreach ($rows as $row) {
+            // Ignorar filas vacías o mal formadas
+            if (count($row) < count($header)) {
+                continue;
+            }
+
+            $rec = array_combine($header, $row);
+
+            $moduloId = Modulo::where('codigo', trim($rec['cod_modulo'] ?? ''))->first()->id ?? null;
+
+            if(!$moduloId) {
+                $this->command->warn("Módulo no encontrado para código '{$rec['cod_modulo']}'");
+                continue;
+            }
+
+            $resultadoId = ResultadoAprendizaje::where(['modulo_id' => $moduloId, 'codigo' => "RA" . trim($rec['id_ra'] ?? '')])->first()->id ?? null;
+
+            if(!$resultadoId) {
+                $this->command->warn("Resultado de aprendizaje no encontrado para módulo '{$rec['cod_modulo']}' y RA 'RA{$rec['id_ra']}'");
+                continue;
+            }
+            $data[] = [
+                'resultado_aprendizaje_id' => $resultadoId,
+                'codigo' => trim($rec['id_criterio'] ?? ''),
+                'descripcion' => $rec['definicion'] ?? null,
+                'created_at' => now(),
+                'updated_at' => now(),
+            ];
+        }
+
+        // Insertar/actualizar usando upsert para evitar duplicados por 'codigo'
+        DB::transaction(function () use ($data) {
+            foreach (array_chunk($data, 200) as $chunk) {
+                DB::table('criterios_evaluacion')->upsert(
+                    $chunk,
+                    ['resultado_aprendizaje_id', 'codigo'], // llave única para evitar duplicados
+                    ['descripcion', 'updated_at']
+                );
+            }
+        });
+    }
 ```
 
 ---

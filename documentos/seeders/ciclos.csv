@@ -1,15 +1,19 @@
-familia,nivel,cod_ciclo,nombre,curso
-IFC,GS,12242002,Ciclo 12242002,1
-IFC,GS,12242003,Ciclo 12242003,2
-IFC,GB,12342002,Ciclo 12342002,1
-IFC,GS,12242001,Ciclo 12242001,1
-IFC,GM,12142001,Ciclo 12142001,1
-,,,Ciclo ,
-IFC,GB,12342001,Ciclo 12342001,1
-ADM,CFGB,12342002,Ciclo 12342002,1
-ADM,CFGB,12342101,Ciclo 12342101,1
-ADM,CFGM,12112101,Ciclo 12112101,1
-ADM,CFGS,12212102,Ciclo 12212102,1
-ADM,CFGS,12212101,Ciclo 12212101,1
-IFC,GM,12142201,Ciclo 12142201,1
-COM,GB,12342201,Ciclo 12342201,1
+familia,nivel,cod_ciclo,nombre
+IFC,GS,12242002,Desarrollo de Aplicaciones Multiplataforma
+IFC,GS,12242003,Desarrollo de Aplicaciones Web
+IFC,GB,12342002,Informática de oficina
+IFC,GS,12242001,Administración de Sistemas Informáticos en Red
+IFC,GM,12142001,Sistemas Microinformáticos y Redes
+IFC,GB,12342001,Informática y Comunicaciones
+ADM,GB,12342002,Informática de oficina
+ADM,GB,12342101,Servicios Administrativos
+ADM,GM,12142101,Gestión Administrativa
+ADM,GS,12242102,Administración y Finanzas
+ADM,GS,12242101,Asistencia a la dirección
+COM,GM,12142201,Actividades comerciales
+COM,GB,12342201,Servicios Comerciales
+COM,GM,12142202,Comercialización de Productos Alimentarios
+COM,GS,12242201,Comercio Internacional
+COM,GS,12242202,Gestión de ventas y espacios comerciales
+COM,GS,12242203,Marketing y publicidad
+COM,GS,12242204,Transporte y Logística
