@@ -14,6 +14,13 @@
 |     | [1.10](./01_10_verifica_tinker.md) | [Verificación con Tinker](./01_10_verifica_tinker.md) |
 |     | [1.11](./01_11_soluciones.md) | [Soluciones](./01_11_soluciones.md) |
 | [2](./02_frontend_layout.md) |  | [Frontend: layout y vistas Blade para el marketplace](./02_frontend_layout.md) |
+|    | [2.2](./02_02_tailwind.md) | [Adaptación de Tailwind CSS](./02_02_tailwind.md) |
+|    | [2.3](./02_03_layouts.md) | [Layouts con Blade y Tailwind CSS](./02_03_layouts.md) |
+|    | [2.4](./02_04_vistas.md) | [Vistas con Blade](./02_04_vistas.md) |
+|    | [2.7](./02_07_controladores.md) | [Controladores en Laravel](./02_07_controladores.md) |
+|    | [2.8](./02_08_rutas.md) | [Rutas](./02_08_rutas.md) |
+|    | [2.9](./02_09_middleware_helper.md) | [Middleware y helpers](./02_09_middleware_helper.md) |
+|    | [2.10](./02_10_verificación_final.md) | [Verificación final de la Unidad 2](./02_10_verificación_final.md) |
 | [3](./03_api_rest.md) |  | [API REST EAC](./03_api_rest.md) |
 | [4](./04_autenticacion.md) |  | [Autenticación con Sanctum + Keyrock](./04_autenticacion.md) |
 | [5](./05_motor_navegacion.md) |  | [Motor de navegación: ZDP y recomendación](./05_motor_navegacion.md) |
