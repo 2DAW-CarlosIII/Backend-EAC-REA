@@ -10,9 +10,7 @@ Antes de continuar con la Unidad 3, confirma que:
 - [ ] Al autenticarse como `estudiante@backend-eac.test`, el panel muestra el perfil de habilitación con barra de progreso al 0%.
 - [ ] Al autenticarse como `docente@backend-eac.test`, el dashboard muestra el ecosistema asignado con el número de SCs y estudiantes.
 - [ ] `GET /estudiante/dashboard` devuelve 403 para el docente y redirige a login para un invitado.
-- [ ] La directiva `@role('docente')` funciona correctamente en las vistas.
-- [ ] Puedes explicar por qué `resultadosAprendizaje` se carga desde `$modulo` y no desde `$ecosistema`.
-- [ ] Puedes explicar por qué `matriculas` usa `modulo_id` como FK y qué implicaciones tiene para el catálogo.
+- [ ] Las directivas `@role('docente')` y `@role('estudiante')` funcionan correctamente en las vistas.
 
 ---
 
