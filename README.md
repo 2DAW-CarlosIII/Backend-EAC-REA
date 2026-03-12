@@ -22,7 +22,13 @@
 |    | [2.9](./02_09_middleware_helper.md) | [Middleware y helpers](./02_09_middleware_helper.md) |
 |    | [2.10](./02_10_verificación_final.md) | [Verificación final de la Unidad 2](./02_10_verificación_final.md) |
 |    | [2.10](./02_11_soluciones.md) | [Soluciones a los ejercicios](./02_11_soluciones.md) |
-| [3](./03_api_rest.md) |  | [API REST EAC](./03_api_rest.md) |
+| [3](./03_api_rest_eac.md) |  | [API REST EAC](./03_api_rest_eac.md) |
+|    | [3.3](./03_03_recursos_API.md) | [Recursos API](./03_03_recursos_API.md) |
+|    | [3.4](./03_04_controladores_API.md) | [Controladores de API](./03_04_controladores_API.md) |
+|    | [3.5](./03_05_rutas_API.md) | [Rutas de API](./03_05_rutas_API.md) |
+|    | [3.6](./03_06_control_errores.md) | [Control de errores](./03_06_control_errores.md) |
+|    | [3.7](./03_07_verificacion_curl.md) | [Verificación con curl](./03_07_verificacion_curl.md) |
+|    | [3.8](./03_08_verificacion_final.md) | [Verificación de la unidad](./03_08_verificacion_final.md) |
 | [4](./04_autenticacion.md) |  | [Autenticación con Sanctum + Keyrock](./04_autenticacion.md) |
 | [5](./05_motor_navegacion.md) |  | [Motor de navegación: ZDP y recomendación](./05_motor_navegacion.md) |
 | [6](./06_sincronizacion.md) |  | [Sincronización con FIWARE Orion](./06_sincronizacion.md) |
