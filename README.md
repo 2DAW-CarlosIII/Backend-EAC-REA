@@ -21,6 +21,7 @@
 |    | [2.8](./02_08_rutas.md) | [Rutas](./02_08_rutas.md) |
 |    | [2.9](./02_09_middleware_helper.md) | [Middleware y helpers](./02_09_middleware_helper.md) |
 |    | [2.10](./02_10_verificación_final.md) | [Verificación final de la Unidad 2](./02_10_verificación_final.md) |
+|    | [2.10](./02_11_soluciones.md) | [Soluciones a los ejercicios](./02_11_soluciones.md) |
 | [3](./03_api_rest.md) |  | [API REST EAC](./03_api_rest.md) |
 | [4](./04_autenticacion.md) |  | [Autenticación con Sanctum + Keyrock](./04_autenticacion.md) |
 | [5](./05_motor_navegacion.md) |  | [Motor de navegación: ZDP y recomendación](./05_motor_navegacion.md) |

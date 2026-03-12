@@ -26,4 +26,6 @@ Antes de continuar con la Unidad 3, confirma que:
 ---
 **Unidad anterior ←** [Unidad 1: Modelado de datos EAC en Laravel](./01_modelado_datos_eac.md)
 
+  **Siguiente capítulo →** [Soluciones](./02_11_soluciones.md)
+
 **Siguiente unidad →** [Unidad 3: API REST EAC](./03_api_rest_eac.md)

@@ -113,7 +113,10 @@ En función de si te autenticas como docente o como estudiante, verás el enlace
 
 En este momento, no se visualiza correctamente el contenido de los enlaces **Mi docencia** o **Mi espacio**, ya que generan errores.
 
-**Sin modificar el código de las vistas correspondientes a esos enlaces**, debes modificar el mínimo código posible **en los modelos** para que las vistas no generen errores y se visualicen correctamente.
+**Sin modificar el código de la vista del docente**, debes modificar el mínimo código posible **en los modelos** para que la vista del docente no genere errores y se visualice correctamente. (solución)[./02_11_soluciones.md#vista-docente]
+
+También, **sin modificar el código de la vista del estudiante**, debes posibilitar que se visualice la vista del estudiante y que funcione el enlace a **Mis módulos** que se muestra en esa vista. (solución)[./02_11_soluciones.md#vista-estudiante]
+
 
 ### Consideraciones y buenas prácticas
 
