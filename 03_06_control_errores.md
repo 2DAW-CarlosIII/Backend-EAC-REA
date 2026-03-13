@@ -27,6 +27,6 @@ Registra un handler en `bootstrap/app.php` para que los errores de la API devuel
 
 **Unidad anterior ←** [Unidad 2: Frontend: layout y vistas Blade para el marketplace](./02_frontend_layout.md)
 
-  **Siguiente capítulo →** [Verificación con curl](./03_07_verificacion_curl.md)
+  **Siguiente capítulo →** [Verificación con curl](./03_07_comprobaciones.md)
 
 **Siguiente unidad →** [Unidad 4: Autenticación con Sanctum + Keyrock](./04_autenticacion_sanctum_keyrock.md)

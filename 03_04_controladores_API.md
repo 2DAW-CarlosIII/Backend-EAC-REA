@@ -77,7 +77,6 @@ use App\Http\Controllers\Controller;
 use App\Http\Resources\EcosistemaResource;
 use App\Http\Resources\SituacionCompetenciaResource;
 use App\Models\EcosistemaLaboral;
-use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
 
 class EcosistemaController extends Controller
@@ -128,7 +127,7 @@ class EcosistemaController extends Controller
 ## 3.4.2. Estudiante
 
 ```bash
-php artisan make:controller Api/V1/Estudiante/PerfilController --invokable
+php artisan make:controller Api/V1/Estudiante/PerfilController
 php artisan make:controller Api/V1/Estudiante/MatriculaController --invokable
 ```
 
@@ -367,7 +366,7 @@ class ProgresoController extends Controller
         $esDocente = auth()->user()
             ->userRoles()
             ->where('ecosistema_laboral_id', $ecosistema->id)
-            ->whereHas('role', fn($q) => $q->where('name', 'docente'))
+            ->where('name', 'docente')
             ->exists();
 
         abort_unless($esDocente, 403, 'No tienes rol de docente en este ecosistema.');
@@ -388,7 +387,6 @@ use App\Http\Controllers\Controller;
 use App\Models\EcosistemaLaboral;
 use App\Models\PerfilHabilitacion;
 use App\Models\SituacionCompetencia;
-use App\Models\User;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -495,7 +493,7 @@ class ConquistaController extends Controller
         $esDocente = auth()->user()
             ->userRoles()
             ->where('ecosistema_laboral_id', $ecosistema->id)
-            ->whereHas('role', fn($q) => $q->where('name', 'docente'))
+            ->where('name', 'docente')
             ->exists();
 
         abort_unless($esDocente, 403, 'No tienes rol de docente en este ecosistema.');

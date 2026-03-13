@@ -61,14 +61,37 @@ Los errores siguen RFC 9457 (Problem Details):
 
 ### Stub de autenticación Sanctum
 
-En esta unidad los endpoints autenticados usan `auth:sanctum` como middleware. La emisión real de tokens (integrada con Keyrock) se implementa en la Unidad 4. Por ahora, emite un token manualmente para poder probar:
+En esta unidad los endpoints autenticados usan `auth:sanctum` como middleware, por lo que tendremos que instalar _Sanctum_.
+
+```bash
+php artisan install:api
+```
+
+Posteriormente, asociaremos el trait `HasApiTokens` al modelo `User` para poder emitir tokens de prueba:
+
+```php
+// app/Models/User.php
+
+namespace App\Models;
+
+// ...
+use Laravel\Sanctum\HasApiTokens;
+
+class User extends Authenticatable
+{
+    use HasFactory, Notifiable, HasApiTokens;
+
+    // ...
+}
+```
+
+La emisión real de tokens (integrada con Keyrock) se implementa en la Unidad 4. Por ahora, emite un token manualmente para poder probar:
 
 ```bash
 php artisan tinker
 # En Tinker:
 $user = App\Models\User::where('email', 'estudiante@backend-eac.test')->first();
 $token = $user->createToken('test')->plainTextToken;
-echo $token;
 ```
 
 Guarda ese token: lo usarás en todas las llamadas `curl` autenticadas de esta unidad.

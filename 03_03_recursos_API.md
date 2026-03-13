@@ -1,6 +1,6 @@
 ## 3.3. API Resources
 
-Los API Resources son la capa de transformación entre los modelos Eloquent y el JSON que devuelve la API. Créalos todos antes de escribir los controladores.
+Los API Resources son la capa de transformación entre los modelos Eloquent y el JSON que devuelve cada uno de los endpoints de la API. Créalos todos antes de escribir los controladores.
 
 ```bash
 php artisan make:resource ModuloResource
@@ -70,9 +70,9 @@ class ModuloResource extends JsonResource
             }),
 
             'links' => [
-                'self'       => route('api.modulos.show', $this->id),
+                'self'       => route('api.v1.modulos.show', $this->id),
                 'ecosistema' => $this->ecosistemasLaborales?->where('activo', true)->first()
-                    ? route('api.ecosistemas.show',
+                    ? route('api.v1.ecosistemas.show',
                         $this->ecosistemasLaborales->where('activo', true)->first()->id)
                     : null,
             ],
@@ -116,6 +116,10 @@ class ModuloCollection extends ResourceCollection
 ```php
 // app/Http/Resources/EcosistemaResource.php
 
+namespace App\Http\Resources;
+
+use Illuminate\Http\Request;
+use Illuminate\Http\Resources\Json\JsonResource;
 class EcosistemaResource extends JsonResource
 {
     public function toArray(Request $request): array
@@ -144,9 +148,9 @@ class EcosistemaResource extends JsonResource
             ],
 
             'links' => [
-                'self'       => route('api.ecosistemas.show', $this->id),
-                'situaciones' => route('api.ecosistemas.situaciones', $this->id),
-                'modulo'     => route('api.modulos.show', $this->modulo_id),
+                'self'       => route('api.v1.ecosistemas.show', $this->id),
+                'situaciones' => route('api.v1.ecosistemas.situaciones', $this->id),
+                'modulo'     => route('api.v1.modulos.show', $this->modulo_id),
             ],
         ];
     }
@@ -157,6 +161,11 @@ class EcosistemaResource extends JsonResource
 
 ```php
 // app/Http/Resources/SituacionCompetenciaResource.php
+
+namespace App\Http\Resources;
+
+use Illuminate\Http\Request;
+use Illuminate\Http\Resources\Json\JsonResource;
 
 class SituacionCompetenciaResource extends JsonResource
 {
@@ -209,6 +218,11 @@ Este resource es el más importante de la API: su estructura está diseñada par
 
 ```php
 // app/Http/Resources/PerfilHabilitacionResource.php
+
+namespace App\Http\Resources;
+
+use Illuminate\Http\Request;
+use Illuminate\Http\Resources\Json\JsonResource;
 
 class PerfilHabilitacionResource extends JsonResource
 {
@@ -265,6 +279,11 @@ class PerfilHabilitacionResource extends JsonResource
 ```php
 // app/Http/Resources/SituacionConquistadaResource.php
 
+namespace App\Http\Resources;
+
+use Illuminate\Http\Request;
+use Illuminate\Http\Resources\Json\JsonResource;
+
 class SituacionConquistadaResource extends JsonResource
 {
     public function toArray(Request $request): array
@@ -285,6 +304,11 @@ class SituacionConquistadaResource extends JsonResource
 
 ```php
 // app/Http/Resources/ProgresoEstudianteResource.php
+
+namespace App\Http\Resources;
+
+use Illuminate\Http\Request;
+use Illuminate\Http\Resources\Json\JsonResource;
 
 class ProgresoEstudianteResource extends JsonResource
 {

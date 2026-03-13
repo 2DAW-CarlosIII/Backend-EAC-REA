@@ -1,6 +1,10 @@
-## 3.7. Verificación con `curl`
+## 3.7. Verificación
 
-Sustituye `TU_TOKEN` por el token generado en la sección 3.2.
+### 3.7.1 Verificación con `curl`
+
+Para comprobar que los endpoints funcionan, ejecuta las siguientes peticiones desde un terminal, sustituyendo `TU_TOKEN` por el token generado en la [sección 3.2](./03_api_rest_eac.md#32-configuración).
+
+> Para utilizar `jq` desde el terminal, instálalo con `sudo apt install jq`.
 
 ### Endpoints públicos
 
@@ -40,6 +44,10 @@ curl -s -X POST http://backend-eac.test/api/v1/estudiante/matriculas \
 
 ### Endpoints autenticados — docente
 
+> Para que estos endopoints funcionen, el token debe pertenecer a un usuario con el rol de docente en el ecosistema 1.
+
+> Además, la petición al **progreso del grupo en el ecosistema** generará el error `Call to undefined relationship [estudiante] on model [App\Models\Matricula]`, que deberás corregir añadiendo esta relación al modelo `Matricula`.
+
 ```bash
 # Progreso del grupo en el ecosistema 1
 curl -s http://backend-eac.test/api/v1/docente/ecosistemas/1/progreso \
@@ -56,6 +64,7 @@ curl -s -X POST http://backend-eac.test/api/v1/docente/ecosistemas/1/conquistas 
         "puntuacion_conquista": 84.5
       }' | jq .
 ```
+
 
 ### Respuesta esperada tras registrar SC-01
 
@@ -106,6 +115,12 @@ Observa cómo el campo `ngsi_ld_id` ya tiene el formato URN que usará la Unidad
     }
 }
 ```
+
+### 3.7.3 Verificación con `test`
+
+Para comprobar que los endpoints funcionan correctamente, puedes crear pruebas automatizadas utilizando el sistema de pruebas de Laravel.
+
+
 **Unidad anterior ←** [Unidad 2: Frontend: layout y vistas Blade para el marketplace](./02_frontend_layout.md)
 
   **Siguiente capítulo →** [Verificación de la unidad](./03_08_verificacion_final.md)
