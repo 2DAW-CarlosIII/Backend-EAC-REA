@@ -17,11 +17,11 @@ Antes de continuar con la Unidad 3, confirma que:
 ## 📖 Referencias
 
 - [Repositorio del caso de uso VFDS-EAC](https://github.com/C3-VFDS/use_case_pkst)
-- [Laravel Blade Templates](https://laravel.com/docs/11.x/blade)
-- [Laravel Routing](https://laravel.com/docs/11.x/routing)
+- [Laravel Blade Templates](https://laravel.com/docs/blade)
+- [Laravel Routing](https://laravel.com/docs/routing)
 - [Tailwind CSS](https://tailwindcss.com/docs)
 - [@tailwindcss/forms](https://github.com/tailwindlabs/tailwindcss-forms)
-- [Laravel Vite Plugin](https://laravel.com/docs/11.x/vite)
+- [Laravel Vite Plugin](https://laravel.com/docs/vite)
 
 ---
 **Unidad anterior ←** [Unidad 1: Modelado de datos EAC en Laravel](./01_modelado_datos_eac.md)

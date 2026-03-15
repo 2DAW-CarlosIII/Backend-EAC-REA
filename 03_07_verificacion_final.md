@@ -16,9 +16,8 @@ Antes de continuar con la Unidad 4, confirma que:
 ## 📖 Referencias
 
 - [Repositorio del caso de uso VFDS-EAC](https://github.com/C3-VFDS/use_case_pkst)
-- [Laravel API Resources](https://laravel.com/docs/11.x/eloquent-resources)
-- [Laravel Sanctum](https://laravel.com/docs/11.x/sanctum)
-- [RFC 9457 — Problem Details for HTTP APIs](https://www.rfc-editor.org/rfc/rfc9457)
+- [Laravel API Resources](https://laravel.com/docs/eloquent-resources)
+- [Laravel Sanctum](https://laravel.com/docs/sanctum)
 
 ---
 

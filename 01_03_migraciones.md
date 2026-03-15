@@ -262,8 +262,8 @@ public function up(): void
         $table->primary(['sc_id', 'sc_requisito_id']);
     });
 
-    // Evitar que una SC sea requisito de sí misma
-    DB::statement('ALTER TABLE sc_precedencia ADD CONSTRAINT chk_sc_precedencia CHECK (sc_id != sc_requisito_id);');
+    // Evitar que una SC sea requisito de sí misma (no válido en sqlite)
+    // DB::statement('ALTER TABLE sc_precedencia ADD CONSTRAINT chk_sc_precedencia CHECK (sc_id != sc_requisito_id);');
 }
 ```
 

@@ -118,7 +118,13 @@ Observa cómo el campo `ngsi_ld_id` ya tiene el formato URN que usará la Unidad
 
 ### 3.7.3 Verificación con `test`
 
-Para comprobar que los endpoints funcionan correctamente, puedes crear pruebas automatizadas utilizando el sistema de pruebas de Laravel.
+Para comprobar que los _endpoints_ funcionan correctamente, puedes crear pruebas automatizadas utilizando el sistema de pruebas de Laravel.
+
+En esta práctica guiada, se han incluido pruebas de ejemplo en el directorio `documentos/tests/Feature` para los endpoints tanto públicos como los de estudiante y docente. Cópialas al directorio de `tests` de tu proyecto y ejecútalas con el siguiente comando:
+
+```bash
+php artisan test
+```
 
 
 **Unidad anterior ←** [Unidad 2: Frontend: layout y vistas Blade para el marketplace](./02_frontend_layout.md)
