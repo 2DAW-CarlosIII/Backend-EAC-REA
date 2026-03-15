@@ -45,6 +45,6 @@ Route::prefix('v1')->name('api.v1.')->group(function () {
 
 **Unidad anterior ←** [Unidad 2: Frontend: layout y vistas Blade para el marketplace](./02_frontend_layout.md)
 
-  **Siguiente capítulo →** [Control de errores](./03_06_control_errores.md)
+  **Siguiente capítulo →** [Verificación con curl](./03_06_comprobaciones.md)
 
 **Siguiente unidad →** [Unidad 4: Autenticación con Sanctum + Keyrock](./04_autenticacion_sanctum_keyrock.md)

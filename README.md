@@ -26,9 +26,8 @@
 |    | [3.3](./03_03_recursos_API.md) | [Recursos API](./03_03_recursos_API.md) |
 |    | [3.4](./03_04_controladores_API.md) | [Controladores de API](./03_04_controladores_API.md) |
 |    | [3.5](./03_05_rutas_API.md) | [Rutas de API](./03_05_rutas_API.md) |
-|    | [3.6](./03_06_control_errores.md) | [Control de errores](./03_06_control_errores.md) |
-|    | [3.7](./03_07_comprobaciones.md) | [Verificación con curl](./03_07_comprobaciones.md) |
-|    | [3.8](./03_08_verificacion_final.md) | [Verificación de la unidad](./03_08_verificacion_final.md) |
+|    | [3.7](./03_06_comprobaciones.md) | [Verificación con curl](./03_06_comprobaciones.md) |
+|    | [3.8](./03_07_verificacion_final.md) | [Verificación de la unidad](./03_07_verificacion_final.md) |
 | [4](./04_autenticacion.md) |  | [Autenticación con Sanctum + Keyrock](./04_autenticacion.md) |
 | [5](./05_motor_navegacion.md) |  | [Motor de navegación: ZDP y recomendación](./05_motor_navegacion.md) |
 | [6](./06_sincronizacion.md) |  | [Sincronización con FIWARE Orion](./06_sincronizacion.md) |

@@ -123,6 +123,6 @@ Para comprobar que los endpoints funcionan correctamente, puedes crear pruebas a
 
 **Unidad anterior ←** [Unidad 2: Frontend: layout y vistas Blade para el marketplace](./02_frontend_layout.md)
 
-  **Siguiente capítulo →** [Verificación de la unidad](./03_08_verificacion_final.md)
+  **Siguiente capítulo →** [Verificación de la unidad](./03_07_verificacion_final.md)
 
 **Siguiente unidad →** [Unidad 4: Autenticación con Sanctum + Keyrock](./04_autenticacion_sanctum_keyrock.md)
