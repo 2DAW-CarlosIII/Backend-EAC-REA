@@ -28,8 +28,8 @@
 |    | [3.5](./03_05_rutas_API.md) | [Rutas de API](./03_05_rutas_API.md) |
 |    | [3.7](./03_06_comprobaciones.md) | [Verificación con curl](./03_06_comprobaciones.md) |
 |    | [3.8](./03_07_verificacion_final.md) | [Verificación de la unidad](./03_07_verificacion_final.md) |
-| [4](./04_autenticacion.md) |  | [Autenticación con Sanctum + Keyrock](./04_autenticacion.md) |
-| [5](./05_motor_navegacion.md) |  | [Motor de navegación: ZDP y recomendación](./05_motor_navegacion.md) |
+| [4](./04_motor_navegacion.md) |  | [Motor de navegación: ZDP y recomendación](./04_motor_navegacion.md) |
+| [5](./05_autenticacion.md) |  | [Autenticación con Sanctum + Keyrock](./05_autenticacion.md) |
 | [6](./06_sincronizacion.md) |  | [Sincronización con FIWARE Orion](./06_sincronizacion.md) |
 | [7](./07_evaluacion.md) |  | [Evaluación y Huella de Talento](./07_evaluacion.md) |
 | [8](./08_visualizacion.md) |  | [Visualización del espacio competencial](./08_visualizacion.md) |

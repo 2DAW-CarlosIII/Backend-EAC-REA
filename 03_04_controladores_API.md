@@ -506,5 +506,5 @@ class ConquistaController extends Controller
 **Unidad anterior ←** [Unidad 2: Frontend: layout y vistas Blade para el marketplace](./02_frontend_layout.md)
 
   **Siguiente capítulo →** [Rutas API](./03_05_rutas_API.md)
-
-**Siguiente unidad →** [Unidad 4: Autenticación con Sanctum + Keyrock](./04_autenticacion_sanctum_keyrock.md)
+  
+**Siguiente unidad →** [Unidad 4: Motor de navegación: ZDP y recomendación](./04_motor_navegacion.md)

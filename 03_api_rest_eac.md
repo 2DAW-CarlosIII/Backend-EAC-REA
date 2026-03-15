@@ -102,4 +102,4 @@ Guarda ese token: lo usarás en todas las llamadas `curl` autenticadas de esta u
 
   **Siguiente capítulo →** [Recursos API](./03_03_recursos_API.md)
 
-**Siguiente unidad →** [Unidad 4: Autenticación con Sanctum + Keyrock](./04_autenticacion_sanctum_keyrock.md)
+**Siguiente unidad →** [Unidad 4: Motor de navegación: ZDP y recomendación](./04_motor_navegacion.md)
