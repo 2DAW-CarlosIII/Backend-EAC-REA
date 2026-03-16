@@ -29,6 +29,11 @@
 |    | [3.7](./03_06_comprobaciones.md) | [Verificación con curl](./03_06_comprobaciones.md) |
 |    | [3.8](./03_07_verificacion_final.md) | [Verificación de la unidad](./03_07_verificacion_final.md) |
 | [4](./04_motor_navegacion.md) |  | [Motor de navegación: ZDP y recomendación](./04_motor_navegacion.md) |
+|    | [4.1](./04_01_fundamento_conceptual_zdp.md) | [Fundamento conceptual de la ZDP](./04_01_fundamento_conceptual_zdp.md) |
+|    | [4.2](./04_02_servicios_zdp.md) | [Servicios de dominio](./04_02_servicios_zdp.md) |
+|    | [4.3](./04_03_endpoint_api_zdp.md) | [Endpoint de la ZDP](./04_03_endpoint_api_zdp.md) |
+|    | [4.4](./04_04_vistas_zdp.md) | [Vistas de la ZDP](./04_04_vistas_zdp.md) |
+|    | [4.5](./04_05_comprobaciones.md) | [Comprobaciones finales](./04_05_comprobaciones.md) |
 | [5](./05_autenticacion.md) |  | [Autenticación con Sanctum + Keyrock](./05_autenticacion.md) |
 | [6](./06_sincronizacion.md) |  | [Sincronización con FIWARE Orion](./06_sincronizacion.md) |
 | [7](./07_evaluacion.md) |  | [Evaluación y Huella de Talento](./07_evaluacion.md) |

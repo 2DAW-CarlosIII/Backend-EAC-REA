@@ -111,7 +111,7 @@ Ahora que cada perfil tiene la información de cuántas _SCs_ hay en su ZDP y si
 
                 {{-- Acción --}}
                 <a href="{{ route('estudiante.modulo', $perfil->ecosistemaLaboral->modulo) }}"
-                class="bg-vfds-primary hover:bg-vfds-primary/80 text-white text-sm font-medium
+                class="bg-vfds-primary hover:bg-vfds-primary/80 text-sm font-medium
                         px-4 py-2 rounded-lg transition whitespace-nowrap">
                     {{ $perfil->completado ? 'Ver resumen' : 'Continuar' }}
                 </a>
@@ -124,18 +124,21 @@ Ahora que cada perfil tiene la información de cuántas _SCs_ hay en su ZDP y si
 Necesitamos crear un nuevo controlador para la vista del módulo, que se encargue de cargar el módulo, su ecosistema laboral asociado, el perfil del estudiante en ese ecosistema y la clasificación de las _SCs_ para mostrarla en la vista del módulo, así como la recomendación personalizada. Para ello, ejecuta el siguiente comando:
 
 ```bash
-php artisan make:controller Estudiante/ModuloController --invokable
+php artisan make:controller Estudiante/ModuloController
 ```
 
 ```php
+
 namespace App\Http\Controllers\Estudiante;
 
 use App\Http\Controllers\Controller;
+use App\Models\FamiliaProfesional;
 use App\Models\Modulo;
 use App\Models\PerfilHabilitacion;
 use App\Services\GrafoService;
 use App\Services\RecomendacionService;
 use Illuminate\Contracts\View\View;
+use Illuminate\Http\Request;
 
 class ModuloController extends Controller
 {
@@ -144,7 +147,30 @@ class ModuloController extends Controller
         private readonly RecomendacionService $recomendacionService,
     ) {}
 
-    public function __invoke(Modulo $modulo): View
+    /**
+    * Handle the incoming request.
+    */
+    public function index(Request $request) : View
+    {
+        $familias = FamiliaProfesional::orderBy('nombre')->get();
+
+        $modulos = Modulo::with([
+            'cicloFormativo.familiaProfesional',
+            'ecosistemasLaborales' => fn($q) => $q->where('activo', true),
+        ])
+        ->whereHas('ecosistemasLaborales', fn($q) => $q->where('activo', true))
+        ->whereHas('matriculas', fn($q) => $q->where('estudiante_id', auth()->id()))
+        ->when($request->filled('familia'), fn($q) =>
+            $q->whereHas('cicloFormativo',
+                fn($q2) => $q2->where('familia_profesional_id', $request->familia))
+        )
+        ->orderBy('codigo')
+        ->paginate(15);
+
+        return view('publico.modulos.index', compact('modulos', 'familias'));
+    }
+
+    public function show(Modulo $modulo): View
     {
         abort_unless(
             auth()->user()->matriculas()->where('modulo_id', $modulo->id)->exists(),
@@ -173,7 +199,16 @@ class ModuloController extends Controller
 }
 ```
 
-### 4.4.4. Creación de la vista del módulo para el estudiante
+### 4.4.4. Rutas de módulos de estudiante
+
+Añade las rutas _web_ que permitan alcanzar los métodos definidos en el controlador de _Modulo_ del estudiante:
+
+```php
+       Route::get('/modulos',         [Estudiante\ModuloController::class, 'index'])->name('modulos.index');
+       Route::get('/modulos/{modulo}', [Estudiante\ModuloController::class, 'show'])->name('modulo');
+```
+
+### 4.4.5. Creación de la vista del módulo para el estudiante
 
 Crearemos una vista `estudiante/modulo.blade.php` que muestre la información del módulo, el ecosistema laboral asociado, el perfil del estudiante y la clasificación de las _SCs_ (conquistadas, disponibles en ZDP y bloqueadas), así como la recomendación personalizada. Para crear la vista, ejecuta el siguiente comando:
 
@@ -351,7 +386,7 @@ cuyo contenido es:
                                         $pivot = $perfil->situacionesConquistadas
                                             ->firstWhere('codigo', $sc->codigo)?->pivot;
                                     @endphp
-                                    <x-sc-badge
+                                    <x-gradiente-badge
                                         :codigo="$sc->codigo"
                                         :gradiente="$pivot?->gradiente_autonomia"
                                     />
