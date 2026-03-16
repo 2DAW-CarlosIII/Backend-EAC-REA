@@ -1,6 +1,6 @@
 ## 4.3. Endpoint de la API: ZDP del estudiante
 
-Añade un controlador invocable al grupo de rutas del estudiante de la Unidad 3:
+Los servicios creados en la sección anterior los utilizaremos desde un controlador _invocable_ que añadiremos al grupo de rutas del estudiante de la Unidad 3:
 
 ```bash
 php artisan make:controller Api/V1/Estudiante/ZdpController --invokable
@@ -96,7 +96,7 @@ Añade la ruta en `routes/api.php`, dentro del grupo `auth:sanctum` → `estudia
 
 ```php
 Route::get('perfil/{ecosistema}/zdp', V1\Estudiante\ZdpController::class)
-    ->name('api.estudiante.zdp');
+    ->name('zdp');
 ```
 
 ---

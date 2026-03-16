@@ -1,10 +1,12 @@
 ## 4.2. Servicios de dominio: GrafoService y RecomendacionService
 
-Los **servicios** en _Laravel_ son clases que encapsulan lógica de negocio compleja que no encaja naturalmente en un modelo Eloquent ni en un controlador. Son ideales para algoritmos como el cálculo de la ZDP o la generación de recomendaciones, que involucran múltiples entidades y reglas.
+Los **servicios** en _Laravel_ son clases que encapsulan lógica de negocio compleja que no encaja naturalmente en un modelo _Eloquent_ ni en un controlador. Son ideales para algoritmos como el cálculo de la ZDP o la generación de recomendaciones, que involucran múltiples entidades y reglas.
 
 ### 4.2.1. `GrafoService`
 
 El servicio tiene dos responsabilidades: **validar** que el grafo no tiene ciclos al añadir una nueva arista, y **calcular** la ZDP dado un conjunto de códigos conquistados.
+
+A diferencia de muchos otros objetos de _Laravel_, _artisan_ no tiene un comando específico para generar servicios, pero puedes crear la clase manualmente:
 
 ```bash
 mkdir -p app/Services
@@ -18,6 +20,7 @@ namespace App\Services;
 use App\Models\EcosistemaLaboral;
 use App\Models\SituacionCompetencia;
 use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\DB;
 
 class GrafoService
 {
@@ -137,14 +140,18 @@ class GrafoService
             );
         }
 
-        // Construir mapa de adyacencia actual (sin la nueva arista aún)
-        $aristas = \DB::table('sc_precedencia')
+        // Lista de adyacencia: sc_id → [sc_requisito_id, ...]
+        // groupBy preserva todas las filas aunque sc_id se repita
+        $adyacencia = DB::table('sc_precedencia')
             ->join('situaciones_competencia as sc', 'sc.id', '=', 'sc_precedencia.sc_id')
             ->where('sc.ecosistema_laboral_id', $ecosistema->id)
-            ->pluck('sc_precedencia.sc_requisito_id', 'sc_precedencia.sc_id')
+            ->get(['sc_precedencia.sc_id', 'sc_precedencia.sc_requisito_id'])
+            ->groupBy('sc_id')
+            ->map(fn($filas) => $filas->pluck('sc_requisito_id')->toArray())
             ->toArray();
 
         // DFS desde $scRequisitoId: ¿podemos llegar a $scId?
+        // Si llegamos, la nueva arista $scId → $scRequisitoId crearía un ciclo.
         $visitados = [];
         $pila      = [$scRequisitoId];
 
@@ -164,8 +171,8 @@ class GrafoService
 
             $visitados[$actual] = true;
 
-            foreach ($aristas as $origen => $destino) {
-                if ($origen === $actual && !isset($visitados[$destino])) {
+            foreach ($adyacencia[$actual] ?? [] as $destino) {
+                if (!isset($visitados[$destino])) {
                     $pila[] = $destino;
                 }
             }
@@ -228,6 +235,8 @@ class GrafoService
 ---
 
 ## 4.2.2. `RecomendacionService`
+
+El servicio de recomendación se encarga de sugerir la siguiente _SC_ que el estudiante debería acometer dentro de su _ZDP_, basándose en criterios como la complejidad, la cobertura de _CE_ pendientes y el desbloqueo de nuevas _SCs_.
 
 ```php
 // app/Services/RecomendacionService.php
@@ -384,7 +393,11 @@ class RecomendacionService
 
 ## 4.2.3. Registro de servicios
 
-Registra ambos servicios en el contenedor para poder inyectarlos por tipo:
+Vamos a registrar ambos servicios como _singletons_. Es decir, se creará una única instancia de cada uno durante el ciclo de vida de la aplicación, y esa misma instancia se reutilizará cada vez que se solicite. Esto es especialmente útil para servicios que no mantienen estado interno mutable o que dependen de otros servicios.
+
+En este caso, `RecomendacionService` depende de `GrafoService`, por lo que al registrarlos como singletons, Laravel se encargará de resolver esa dependencia automáticamente.
+
+Además, ninguno de los dos servicios tiene estado interno _mutable_. Por ejemplo, `RecomendacionService` sería _mutable_ si almacenara internamente el perfil del estudiante o el ecosistema actual, lo cual no es el caso. Ambos servicios son esencialmente _stateless_, ya que reciben toda la información que necesitan a través de los parámetros de sus métodos.
 
 ```php
 // app/Providers/AppServiceProvider.php

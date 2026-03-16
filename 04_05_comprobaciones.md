@@ -68,6 +68,7 @@ $grafo = app(App\Services\GrafoService::class);
 
 // Ordenación topológica del ecosistema piloto
 $grafo->ordenTopologico($ecosistema)->pluck('codigo');
+// genera un error. Mira la sección siguiente
 // → ["SC-01", "SC-02", "SC-03"]  (SC-03 siempre al final)
 
 // ZDP con perfil vacío
@@ -100,6 +101,31 @@ $rec->rankingZdp($ecosistema, [])->map(fn($i) => [
     $i['sc']->codigo => $i['score']
 ]);
 // → [{"SC-01": 20}, {"SC-02": 17}]  (puntuaciones orientativas)
+```
+
+### Corrección de errores
+
+La ejecución de la orden `$grafo->ordenTopologico($ecosistema)->pluck('codigo');` genera algunos _warning_, que, a la postre, dan lugar a una _excepción_:
+
+```bash
+   NOTICE  Indirect modification of overloaded element of Illuminate\Support\Collection has no effect in app/Services/GrafoService.php on line 182.
+
+   NOTICE  Indirect modification of overloaded element of Illuminate\Support\Collection has no effect in app/Services/GrafoService.php on line 196.
+...
+
+   RuntimeException  El grafo de precedencia contiene ciclos. Revisa la tabla sc_precedencia del ecosistema #1.
+```
+
+Modifica las dos líneas referenciadas para que el resultado de la ejecución de esa orden sea:
+
+```bash
+= Illuminate\Support\Collection {#5951
+    all: [
+      "SC-01",
+      "SC-02",
+      "SC-03",
+    ],
+  }
 ```
 
 ---

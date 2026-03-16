@@ -1,5 +1,7 @@
 ## 4.1. Fundamento conceptual
 
+En este apartado se introduce el concepto teórico de **Zona de Despliegue Proximal (ZDP)**, que es la base del motor de navegación del estudiante en el ecosistema laboral. Como se trata de un concepto ajeno al desarrollo de software, se presenta de forma independiente a la implementación concreta en Laravel. Si no despierta tu curiosidad, puedes saltar directamente a la sección de [implementación de la ZDP en el `GrafoService`](./04_02_servicios_zdp.md).
+
 ### La Zona de Despliegue Proximal
 
 La **ZDP** de un estudiante en un ecosistema laboral es el subconjunto de SCs que cumplen simultáneamente dos condiciones:
