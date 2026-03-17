@@ -1,6 +1,6 @@
 ## 5.5. Servicio de Huella de Talento
 
-La Huella de Talento es el snapshot exportable del estado competencial del estudiante. Su `payload` JSON está diseñado para ser directamente mapeado a la entidad NGSI-LD `PerfilHabilitacion` en la Unidad 7.
+La Huella de Talento es el snapshot exportable del estado competencial del estudiante. Su `payload` _JSON_ está diseñado para ser directamente mapeado a la entidad NGSI-LD `PerfilHabilitacion` más adelante.
 
 ```php
 // app/Services/HuellaService.php
@@ -104,7 +104,7 @@ class HuellaService
 }
 ```
 
-Para que `HuellaService` pueda acceder a `FACTORES` como constante pública, declárala como `public` en `CalificacionService`:
+Para que `HuellaService` pueda acceder a `FACTORES` como constante pública, asígnale visibilidad `public` en `CalificacionService`:
 
 ```php
 // app/Services/CalificacionService.php  — cambiar visibilidad

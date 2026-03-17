@@ -16,7 +16,6 @@ use App\Models\EcosistemaLaboral;
 use App\Models\PerfilHabilitacion;
 use App\Services\CalificacionService;
 use Illuminate\Http\JsonResponse;
-use Illuminate\Http\Request;
 
 class CalificacionController extends Controller
 {
@@ -58,7 +57,7 @@ class CalificacionController extends Controller
             auth()->user()
                 ->userRoles()
                 ->where('ecosistema_laboral_id', $ecosistema->id)
-                ->whereHas('role', fn($q) => $q->where('name', 'docente'))
+                ->where('name', 'docente')
                 ->exists(),
             403
         );
@@ -69,10 +68,9 @@ class CalificacionController extends Controller
 Ruta en `routes/api.php`, dentro del grupo `docente`:
 
 ```php
-Route::get(
-    'ecosistemas/{ecosistema}/calificacion/{estudianteId}',
-    V1\Docente\CalificacionController::class
-)->name('api.docente.calificacion');
+Route::get('ecosistemas/{ecosistema}/calificacion/{estudianteId}',
+                V1\Docente\CalificacionController::class
+            )->name('calificacion');
 ```
 
 ---

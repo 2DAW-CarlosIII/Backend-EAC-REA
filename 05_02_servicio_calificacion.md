@@ -1,11 +1,15 @@
 ## 5.2. Servicio de calificación
 
+El `CalificacionService` es el núcleo del sistema de evaluación. Encapsula toda la lógica de cálculo de la calificación ponderada del módulo, considerando:
+- El gradiente de autonomía de cada conquista (asistido, guiado, supervisado, autónomo).
+- El peso de cada CE dentro de su RA.
+- El peso de cada RA dentro del módulo.
+
 ```php
 // app/Services/CalificacionService.php
 
 namespace App\Services;
 
-use App\Models\Modulo;
 use App\Models\PerfilHabilitacion;
 use Illuminate\Support\Collection;
 
@@ -14,7 +18,7 @@ class CalificacionService
     /**
      * Factores de escala por gradiente de autonomía.
      */
-    private const FACTORES = [
+    public const FACTORES = [
         'asistido'    => 0.60,
         'guiado'      => 0.75,
         'supervisado' => 0.90,
@@ -62,7 +66,7 @@ class CalificacionService
         foreach ($ras as $ra) {
             $pesoRa = (float) $ra->peso_porcentaje;
             if ($pesoRa <= 0) {
-                continue;
+                $pesoRa = 1.0;
             }
 
             $puntuacionRa = $this->calcularPuntuacionRa($ra, $conquistasIndexadas);
@@ -106,7 +110,7 @@ class CalificacionService
         $sumaPesosRas     = 0.0;
 
         foreach ($modulo->resultadosAprendizaje as $ra) {
-            $pesoRa       = (float) $ra->peso_porcentaje;
+            $pesoRa       = (float) $ra->peso_porcentaje > 0 ? (float) $ra->peso_porcentaje : 1.0;
             $desglloseCes = $this->calcularDesgloseCes($ra, $conquistasIndexadas);
             $puntuacionRa = $desglloseCes['puntuacion_ra'];
 
@@ -181,7 +185,7 @@ class CalificacionService
         foreach ($ra->criteriosEvaluacion as $ce) {
             $pesoCe = (float) $ce->peso_porcentaje;
             if ($pesoCe <= 0) {
-                continue;
+                $pesoCe = 1.0;
             }
 
             $puntuacionCe = $this->calcularPuntuacionCe($ce->id, $conquistasIndexadas);
@@ -235,6 +239,10 @@ class CalificacionService
 ---
 
 ## 5.3. Registro del servicio
+
+Vamos a registrar los dos servicios que se definen en esta unidad (`CalificacionService` y `HuellaService`) como singletons en el contenedor de servicios de Laravel. Esto garantiza que se reutilice la misma instancia durante toda la petición, lo cual es eficiente dado que no mantienen estado mutable.
+
+Añádelos a los que se definieron en la Unidad 4: `GrafoService` y `RecomendacionService`.
 
 ```php
 // app/Providers/AppServiceProvider.php  (añadir en register())

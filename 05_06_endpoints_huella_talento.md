@@ -117,15 +117,16 @@ class HuellaController extends Controller
 
 ### Rutas
 
-Añade en `routes/api.php`, dentro del grupo `auth:sanctum` → `estudiante`:
+Adapta `routes/api.php`, dentro del grupo `auth:sanctum` → `estudiante`, para que se recojan las siguientes rutas:
 
 ```php
-Route::prefix('perfil/{ecosistema}')->name('api.estudiante.')->group(function () {
-    // … rutas existentes de zdp …
-    Route::get('huellas',  [V1\Estudiante\HuellaController::class, 'index']) ->name('huellas.index');
-    Route::get('huella',   [V1\Estudiante\HuellaController::class, 'show'])  ->name('huella.show');
-    Route::post('huella',  [V1\Estudiante\HuellaController::class, 'store']) ->name('huella.store');
-});
+            Route::prefix('perfil/{ecosistema}')->group(function () {
+                Route::get('/',   [V1\Estudiante\PerfilController::class, 'show'])
+                    ->name('perfil.show');
+                Route::get('huellas',  [V1\Estudiante\HuellaController::class, 'index']) ->name('huellas.index');
+                Route::get('huella',   [V1\Estudiante\HuellaController::class, 'show'])  ->name('huella.show');
+                Route::post('huella',  [V1\Estudiante\HuellaController::class, 'store']) ->name('huella.store');
+            });
 ```
 
 ---

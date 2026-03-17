@@ -19,6 +19,7 @@ Dentro del `DB::transaction`, reemplaza las dos líneas de media simple:
 // ANTES (Unidad 3 — eliminar):
 $nuevaCalificacion = $perfil->situacionesConquistadas()
     ->avg('perfil_situacion.puntuacion_conquista');
+
 $perfil->update(['calificacion_actual' => round($nuevaCalificacion, 2)]);
 
 // DESPUÉS (Unidad 5 — sustituir por):
