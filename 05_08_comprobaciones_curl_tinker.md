@@ -70,6 +70,6 @@ curl -s http://backend-eac.test/api/v1/docente/ecosistemas/1/calificacion/2 \
 
 **Unidad anterior ←** [Unidad 4: Motor de navegación: ZDP y recomendación](./04_motor_navegacion.md)
 
-**Siguiente capítulo →** [Unidad 5.9: Pruebas de la huella de talento](./05_09_tests_huella_talento.md)
+**Siguiente capítulo →** [Unidad 5.9: Validación con tests](./05_09_validacion_tests.md)
 
 **Siguiente unidad →** [Unidad 6: Visualización del espacio competencial](./06_visualizacion_espacio_competencial.md)

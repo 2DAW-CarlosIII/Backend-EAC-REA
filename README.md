@@ -41,7 +41,7 @@
 |    | [5.6](./05_06_endpoints_huella_talento.md) | [Endpoints de la huella de talento](./05_06_endpoints_huella_talento.md) |
 |    | [5.7](./05_07_endpoints_calificacion_docente.md) | [Endpoints de calificación docente](./05_07_endpoints_calificacion_docente.md) |
 |    | [5.8](./05_08_comprobaciones_curl_tinker.md) | [Comprobaciones con curl y Tinker](./05_08_comprobaciones_curl_tinker.md) |
-|    | [5.9](./05_09_tests_huella_talento.md) | [Tests de la huella de talento](./05_09_tests_huella_talento.md) |
+|    | [5.9](./05_09_validacion_tests.md) | [Validación con tests](./05_09_validacion_tests.md) |
 |    | [5.10](./05_10_verificacion_final.md) | [Verificación final](./05_10_verificacion_final.md) |
 | [6](./06_visualizacion_espacio_competencial.md) |  | [Visualización del espacio competencial](./06_visualizacion_espacio_competencial.md) |
 | [7](./07_autenticacion.md) |  | [Autenticación con Sanctum + Keyrock](./07_autenticacion.md) |

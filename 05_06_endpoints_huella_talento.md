@@ -85,7 +85,7 @@ class HuellaController extends Controller
                 'generada_en' => $h->generada_en->toIso8601String(),
                 'ngsi_ld_id'  => $h->ngsi_ld_id,
                 'links'       => [
-                    'self' => route('api.estudiante.huella.show', $ecosistema),
+                    'self' => route('api.v1.estudiante.huella.show', $ecosistema),
                 ],
             ]),
             'meta' => [
