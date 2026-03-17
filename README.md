@@ -34,8 +34,16 @@
 |    | [4.3](./04_03_endpoint_api_zdp.md) | [Endpoint de la ZDP](./04_03_endpoint_api_zdp.md) |
 |    | [4.4](./04_04_vistas_zdp.md) | [Vistas de la ZDP](./04_04_vistas_zdp.md) |
 |    | [4.5](./04_05_comprobaciones.md) | [Comprobaciones finales](./04_05_comprobaciones.md) |
-| [5](./05_autenticacion.md) |  | [Autenticación con Sanctum + Keyrock](./05_autenticacion.md) |
-| [6](./06_sincronizacion.md) |  | [Sincronización con FIWARE Orion](./06_sincronizacion.md) |
-| [7](./07_evaluacion.md) |  | [Evaluación y Huella de Talento](./07_evaluacion.md) |
-| [8](./08_visualizacion.md) |  | [Visualización del espacio competencial](./08_visualizacion.md) |
+| [5](./05_evaluacion_huella_talento.md) |  | [Evaluación y Huella de Talento](./05_evaluacion_huella_talento.md) |
+|    | [5.2](./05_02_servicio_calificacion.md) | [Servicio de calificación](./05_02_servicio_calificacion.md) |
+|    | [5.4](./05_04_actualizar_controlador_conquista.md) | [Actualizar controlador de conquista](./05_04_actualizar_controlador_conquista.md) |
+|    | [5.5](./05_05_servicio_huella_talento.md) | [Servicio de huella de talento](./05_05_servicio_huella_talento.md) |
+|    | [5.6](./05_06_endpoints_huella_talento.md) | [Endpoints de la huella de talento](./05_06_endpoints_huella_talento.md) |
+|    | [5.7](./05_07_endpoints_calificacion_docente.md) | [Endpoints de calificación docente](./05_07_endpoints_calificacion_docente.md) |
+|    | [5.8](./05_08_comprobaciones_curl_tinker.md) | [Comprobaciones con curl y Tinker](./05_08_comprobaciones_curl_tinker.md) |
+|    | [5.9](./05_09_tests_huella_talento.md) | [Tests de la huella de talento](./05_09_tests_huella_talento.md) |
+|    | [5.10](./05_10_verificacion_final.md) | [Verificación final](./05_10_verificacion_final.md) |
+| [6](./06_visualizacion_espacio_competencial.md) |  | [Visualización del espacio competencial](./06_visualizacion_espacio_competencial.md) |
+| [7](./07_autenticacion.md) |  | [Autenticación con Sanctum + Keyrock](./07_autenticacion.md) |
+| [8](./08_sincronizacion.md) |  | [Sincronización con FIWARE Orion](./08_sincronizacion.md) |
 | [9](./09_testing.md) |  | [Testing](./09_testing.md) |
