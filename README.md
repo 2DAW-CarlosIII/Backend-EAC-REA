@@ -44,6 +44,15 @@
 |    | [5.9](./05_09_validacion_tests.md) | [Validación con tests](./05_09_validacion_tests.md) |
 |    | [5.10](./05_10_verificacion_final.md) | [Verificación final](./05_10_verificacion_final.md) |
 | [6](./06_visualizacion_espacio_competencial.md) |  | [Visualización del espacio competencial](./06_visualizacion_espacio_competencial.md) |
+|    | [6.2](./06_02_instala_libreias_graficas.md) | [Instalación de librerías gráficas](./06_02_instala_libreias_graficas.md) |
+|    | [6.3](./06_03_servicio_analitica.md) | [Servicio de analítica](./06_03_servicio_analitica.md) |
+|    | [6.4](./06_04_graficas_docente.md) | [Gráficas para el docente](./06_04_graficas_docente.md) |
+|    | [6.5](./06_05_graficas_estudiante.md) | [Gráficas para el estudiante](./06_05_graficas_estudiante.md) |
+|    | [6.6](./06_06_rutas_graficas.md) | [Rutas para las gráficas](./06_06_rutas_graficas.md) |
+|    | [6.7](./06_07_enlaces_en_vistas.md) | [Enlaces en las vistas](./06_07_enlaces_en_vistas.md) |
+|    | [6.8](./06_08_charts_internamente.md) | [Cómo funcionan los charts internamente](./06_08_charts_internamente.md) |
+|    | [6.9](./06_09_verificacion_tinker_curl.md) | [Verificación con Tinker y Curl](./06_09_verificacion_tinker_curl.md) |
+|    | [6.11](./06_11_verificacion_final.md) | [Verificación final](./06_11_verificacion_final.md) |
 | [7](./07_autenticacion.md) |  | [Autenticación con Sanctum + Keyrock](./07_autenticacion.md) |
 | [8](./08_sincronizacion.md) |  | [Sincronización con FIWARE Orion](./08_sincronizacion.md) |
 | [9](./09_testing.md) |  | [Testing](./09_testing.md) |
