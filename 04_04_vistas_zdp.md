@@ -109,11 +109,11 @@ Ahora que cada perfil tiene la información de cuántas _SCs_ hay en su ZDP y si
                     <p class="text-xs text-gray-400">Calificación</p>
                 </div>
 
-                {{-- Acción --}}
+                {{-- Acciones --}}
                 <a href="{{ route('estudiante.modulo', $perfil->ecosistemaLaboral->modulo) }}"
                 class="bg-vfds-primary hover:bg-vfds-primary/80 text-sm font-medium
                         px-4 py-2 rounded-lg transition whitespace-nowrap">
-                    {{ $perfil->completado ? 'Ver resumen' : 'Continuar' }}
+                    {{ $perfil->completado ? 'Ver resumen' : 'Conquistas' }}
                 </a>
 
             </div>

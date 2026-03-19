@@ -1,6 +1,6 @@
-## 6.9. Prueba manual paso a paso
+## 6.8. Prueba manual paso a paso
 
-Con el servidor arrancado (`php artisan serve`), sigue esta secuencia:
+Pruebas con `tinker`:
 
 ```bash
 # 1. Crea un perfil con conquistas si no tienes datos de prueba
@@ -26,16 +26,23 @@ $perfil->situacionesConquistadas()->syncWithoutDetaching([
 // Recalcular la calificación
 app(App\Services\CalificacionService::class)->calcularYPersistir($perfil->fresh());
 ```
+Pruebas con `curl`:
 
 ```bash
-# 2. Verifica la ruta del docente
-curl -s http://localhost:8000/docente/ecosistemas/1/analytics \
-     -H "Cookie: laravel_session=TU_COOKIE"
+# Verifica la ruta del docente
+curl -s http://backend-eac.test/docente/ecosistemas/1/analytics \
+     -H "Cookie: XSRF-TOKEN=token_xsrf;backend-eac-session=TU_COOKIE"
 # Debe devolver HTML con tres <canvas> y tres bloques <script>
+```
 
-# 3. Verifica que el EACAnalyticsService devuelve datos correctos
+Volvemos a `tinker` para probar los métodos del servicio de analítica:
+
+```bash
 php artisan tinker
+```
 
+```php
+// Verifica que el EACAnalyticsService devuelve datos correctos
 $svc = app(App\Services\EACAnalyticsService::class);
 $eco = App\Models\EcosistemaLaboral::find(1);
 
@@ -55,7 +62,7 @@ $svc->radarHuella($perfil);
 
 ---
 
-## 6.10. Errores frecuentes y cómo resolverlos
+## 6.9. Errores frecuentes y cómo resolverlos
 
 ### `Chart is not defined` en la consola del navegador
 
@@ -107,6 +114,6 @@ dd($desglose['desglose_ra']);
 
 **Unidad anterior ←** [Unidad 5: Evaluación y Huella de Talento](./05_evaluacion_huella_talento.md)
 
-**Siguiente capítulo →** [Unidad 6.11: Verificación final](./06_11_verificacion_final.md)
+**Siguiente capítulo →** [Unidad 6.10: Verificación final](./06_10_verificacion_final.md)
 
 **Siguiente unidad →** [Unidad 7: Autenticación con Sanctum + Keyrock](./07_autenticacion_sanctum_keyrock.md)

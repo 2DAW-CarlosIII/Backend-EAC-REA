@@ -7,7 +7,6 @@ php artisan make:controller Estudiante/HuellaRadarController --invokable
 ```
 
 ```php
-<?php
 // app/Http/Controllers/Estudiante/HuellaRadarController.php
 
 namespace App\Http\Controllers\Estudiante;
@@ -41,8 +40,6 @@ class HuellaRadarController extends Controller
             ->labels($datosRadar['labels'])
             ->dataset('Mi cobertura competencial', 'radar', $datosRadar['data'])
                 ->backgroundColor('rgba(99, 102, 241, 0.25)')
-                ->borderColor('#6366f1')
-                ->pointBackgroundColor('#6366f1')
                 ->options([
                     'responsive' => true,
                     'plugins'    => [
@@ -66,9 +63,6 @@ class HuellaRadarController extends Controller
         $chartRadar
             ->dataset('Máximo posible', 'radar', array_fill(0, count($datosRadar['labels']), 100))
                 ->backgroundColor('rgba(229, 231, 235, 0.15)')
-                ->borderColor('#d1d5db')
-                ->borderDash([5, 5])
-                ->pointRadius(0);
 
         $calificacion = $perfil->calificacion_actual;
 
@@ -85,12 +79,12 @@ class HuellaRadarController extends Controller
 ### 6.5.2. La vista Blade del estudiante
 
 ```bash
-touch resources/views/estudiante/huella-radar.blade.php
+php artisan make:view estudiante.huella-radar
 ```
 
 ```html
 {{-- resources/views/estudiante/huella-radar.blade.php --}}
-@extends('layouts.app')
+@extends('layouts.eac')
 
 @section('title', 'Mi Huella de Talento — ' . $ecosistema->nombre)
 
@@ -213,6 +207,9 @@ touch resources/views/estudiante/huella-radar.blade.php
         });
     });
     </script>
+
+    {{-- Chart.js — necesario para ConsoleTVs/Charts --}}
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.5.1/dist/chart.umd.min.js"></script>
 @endpush
 ```
 

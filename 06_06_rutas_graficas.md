@@ -38,7 +38,7 @@ Route::middleware(['auth', 'role:estudiante'])
         Route::get(
             'perfil/{ecosistema}/huellas',
             // Reutilizamos el controlador de la Unidad 5
-            App\Http\Controllers\Estudiante\HuellaController::class . '@index'
+            App\Http\Controllers\Api\V1\Estudiante\HuellaController::class . '@index'
         )->name('huellas');
     });
 ```
@@ -47,6 +47,6 @@ Route::middleware(['auth', 'role:estudiante'])
 
 **Unidad anterior ←** [Unidad 5: Evaluación y Huella de Talento](./05_evaluacion_huella_talento.md)
 
-**Siguiente capítulo →** [Unidad 6.7: Enlaces en las vistas](./06_07_enlaces_vistas.md)
+**Siguiente capítulo →** [Unidad 6.7: Enlaces en las vistas](./06_07_enlaces_en_vistas.md)
 
 **Siguiente unidad →** [Unidad 7: Autenticación con Sanctum + Keyrock](./07_autenticacion_sanctum_keyrock.md)

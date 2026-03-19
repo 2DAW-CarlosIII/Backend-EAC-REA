@@ -4,11 +4,13 @@
 
 Con `ConsoleTVs/Charts` cada gráfica es una clase PHP que extiende `Chart`. La instancia se crea en el controlador, se configura con los datos del servicio y se pasa a la vista.
 
+Empieza creando las 4 clases de chart para el panel del docente:
+
 ```bash
-php artisan make:chart BarrasConquistasChart --type=bar
-php artisan make:chart DoughnutGradienteChart --type=doughnut
-php artisan make:chart LineasEvolucionChart   --type=line
-php artisan make:chart RadarHuellaChart       --type=radar
+php artisan make:chart BarrasConquistasChart     ## bar
+php artisan make:chart DoughnutGradienteChart    ## doughnut
+php artisan make:chart LineasEvolucionChart      ## line
+php artisan make:chart RadarHuellaChart          ## radar
 ```
 
 Esto crea cuatro archivos en `app/Charts/`. Ábrelos y comprueba que extienden la clase base correcta:
@@ -41,7 +43,6 @@ php artisan make:controller Docente/AnalyticsController --invokable
 ```
 
 ```php
-<?php
 // app/Http/Controllers/Docente/AnalyticsController.php
 
 namespace App\Http\Controllers\Docente;
@@ -69,7 +70,7 @@ class AnalyticsController extends Controller
         $chartRanking = new BarrasConquistasChart();
         $chartRanking
             ->labels($datosRanking['labels'])
-            ->dataset('Nº de conquistas', 'horizontalBar', $datosRanking['data'])
+            ->dataset('Nº de conquistas', 'bar', $datosRanking['data'])
                 ->backgroundColor($datosRanking['colores'])
                 ->options([
                     'indexAxis'  => 'y',       // barras horizontales en Chart.js v4
@@ -109,10 +110,6 @@ class AnalyticsController extends Controller
         $chartEvolucion
             ->labels($datosEvolucion['labels'])
             ->dataset('Conquistas por semana', 'line', $datosEvolucion['data'])
-                ->backgroundColor('rgba(99, 102, 241, 0.15)')
-                ->borderColor('#6366f1')
-                ->pointBackgroundColor('#6366f1')
-                ->fill(true)
                 ->options([
                     'responsive' => true,
                     'plugins'    => [
@@ -128,6 +125,10 @@ class AnalyticsController extends Controller
                             'ticks'       => ['stepSize' => 1],
                         ],
                     ],
+                    'backgroundColor' => 'rgba(99, 102, 241, 0.15)',
+                    'borderColor'     => '#6366f1',
+                    'pointBackgroundColor' => '#6366f1',
+                    'fill'            => true,
                 ]);
 
         // ── Estadísticas de resumen ────────────────────────────────────────
@@ -158,13 +159,12 @@ class AnalyticsController extends Controller
 ### 6.4.3. La vista Blade del docente
 
 ```bash
-mkdir -p resources/views/docente/analytics
-touch resources/views/docente/analytics/show.blade.php
+php artisan make:view docente.analytics.show
 ```
 
 ```html
 {{-- resources/views/docente/analytics/show.blade.php --}}
-@extends('layouts.app')
+@extends('layouts.eac')
 
 @section('title', 'Analítica — ' . $ecosistema->nombre)
 
@@ -247,6 +247,8 @@ touch resources/views/docente/analytics/show.blade.php
     {!! $chartRanking->script() !!}
     {!! $chartGradiente->script() !!}
     {!! $chartEvolucion->script() !!}
+    {{-- Chart.js — necesario para ConsoleTVs/Charts --}}
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.5.1/dist/chart.umd.min.js"></script>
 @endpush
 ```
 

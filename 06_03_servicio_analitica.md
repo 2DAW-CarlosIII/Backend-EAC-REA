@@ -14,12 +14,7 @@ Controller → EACAnalyticsService → Modelos Eloquent → Base de datos
 
 ### 6.3.2. Crear el servicio
 
-```bash
-touch app/Services/EACAnalyticsService.php
-```
-
 ```php
-<?php
 // app/Services/EACAnalyticsService.php
 
 namespace App\Services;

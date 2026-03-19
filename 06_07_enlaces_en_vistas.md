@@ -18,7 +18,7 @@ En la vista `estudiante/modulo.blade.php` (creada en la Unidad 2), añade el acc
 
 ```html
 {{-- dentro del panel de progreso del estudiante --}}
-<a href="{{ route('estudiante.huella-radar', $ecosistema) }}"
+<a href="{{ route('estudiante.huella-radar', $perfil->ecosistemaLaboral) }}"
    class="btn btn-outline-indigo btn-sm">
     🎯 Ver mi Huella de Talento
 </a>
@@ -28,6 +28,6 @@ En la vista `estudiante/modulo.blade.php` (creada en la Unidad 2), añade el acc
 
 **Unidad anterior ←** [Unidad 5: Evaluación y Huella de Talento](./05_evaluacion_huella_talento.md)
 
-**Siguiente capítulo →** [Unidad 6.8: Funcionamiento interno de `Charts`](./06_08_funcionamiento_interno_charts.md)
+**Siguiente capítulo →** [Unidad 6.8: Verificación con Tinker y cURL](./06_08_verificacion_tinker_curl.md)
 
 **Siguiente unidad →** [Unidad 7: Autenticación con Sanctum + Keyrock](./07_autenticacion_sanctum_keyrock.md)

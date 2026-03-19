@@ -194,13 +194,14 @@ Una vez que hemos creado el modelo `SituacionCompetencia`, modifícalo para incl
 * Relación de prerequisitos (belongsToMany a sí mismo)
 * Relación de dependientes (belongsToMany a sí mismo)
 * Relación con `CriterioEvaluacion` (belongsToMany)
+* Relación con `PerfilesHabilitacion` a través de `PerfilSituacion` (belongsToMany)
 
 Define, además, las siguientes propiedades estáticas:
 
 * `fillable` con los campos editables (sin `id` ni `timestamps`)
 * `casts` para convertir `umbral_maestria` a decimal y `activa` a booleano
 
-Puedes ver una posible solución en el apartado [Soluciones](#modelo-situacioncompetencia).
+Puedes ver una posible solución en el apartado [Soluciones](./01_11_soluciones.md#modelo-situacioncompetencia).
 
 ### 1.8.8. NodoRequisito
 
@@ -345,6 +346,11 @@ class PerfilSituacion extends Pivot
         'puntuacion_conquista' => 'decimal:2',
         'fecha_conquista' => 'datetime',
     ];
+
+    public function perfilHabilitacion()
+    {
+        return $this->belongsTo(PerfilHabilitacion::class);
+    }
 }
 ```
 
