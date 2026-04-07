@@ -52,6 +52,6 @@
 |    | [6.7](./06_07_enlaces_en_vistas.md) | [Enlaces en las vistas](./06_07_enlaces_en_vistas.md) |
 |    | [6.8](./06_08_verificacion_tinker_curl.md) | [Verificación con Tinker y Curl](./06_08_verificacion_tinker_curl.md) |
 |    | [6.10](./06_10_verificacion_final.md) | [Verificación final](./06_10_verificacion_final.md) |
-| [7](./07_autenticacion.md) |  | [Autenticación con Sanctum + Keyrock](./07_autenticacion.md) |
+| [7](./07_autorizacion_jwt.md) |  | [Autenticación con JWT de FIWARE](./07_autorizacion_jwt.md) |
 | [8](./08_sincronizacion.md) |  | [Sincronización con FIWARE Orion](./08_sincronizacion.md) |
 | [9](./09_testing.md) |  | [Testing](./09_testing.md) |
