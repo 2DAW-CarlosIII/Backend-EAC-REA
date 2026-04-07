@@ -13,7 +13,7 @@
 |     | [1.9](./01_09_factories_seeders.md) | [Factories y Seeders](./01_09_factories_seeders.md) |
 |     | [1.10](./01_10_verifica_tinker.md) | [Verificación con Tinker](./01_10_verifica_tinker.md) |
 |     | [1.11](./01_11_soluciones.md) | [Soluciones](./01_11_soluciones.md) |
-| [2](./02_frontend_layout.md) |  | [Frontend: layout y vistas Blade para el marketplace](./02_frontend_layout.md) |
+| [2](./02_frontend_blade.md) |  | [Frontend: layout y vistas Blade para el marketplace](./02_frontend_blade.md) |
 |    | [2.2](./02_02_tailwind.md) | [Adaptación de Tailwind CSS](./02_02_tailwind.md) |
 |    | [2.3](./02_03_layouts.md) | [Layouts con Blade y Tailwind CSS](./02_03_layouts.md) |
 |    | [2.4](./02_04_vistas.md) | [Vistas con Blade](./02_04_vistas.md) |

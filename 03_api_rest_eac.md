@@ -98,7 +98,7 @@ Guarda ese token: lo usarás en todas las llamadas `curl` autenticadas de esta u
 
 ---
 
-**Unidad anterior ←** [Unidad 2: Frontend: layout y vistas Blade para el marketplace](./02_frontend_layout.md)
+**Unidad anterior ←** [Unidad 2: Frontend: layout y vistas Blade para el marketplace](./02_frontend_blade.md)
 
   **Siguiente capítulo →** [Recursos API](./03_03_recursos_API.md)
 

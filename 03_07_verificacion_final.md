@@ -21,6 +21,6 @@ Antes de continuar con la Unidad 4, confirma que:
 
 ---
 
-**Unidad anterior ←** [Unidad 2: Frontend: layout y vistas Blade para el marketplace](./02_frontend_layout.md)
+**Unidad anterior ←** [Unidad 2: Frontend: layout y vistas Blade para el marketplace](./02_frontend_blade.md)
 
 **Siguiente unidad →** [Unidad 4: Motor de navegación: ZDP y recomendación](./04_motor_navegacion.md)

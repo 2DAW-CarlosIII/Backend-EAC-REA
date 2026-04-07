@@ -331,7 +331,7 @@ class ProgresoEstudianteResource extends JsonResource
 
 ---
 
-**Unidad anterior ←** [Unidad 2: Frontend: layout y vistas Blade para el marketplace](./02_frontend_layout.md)
+**Unidad anterior ←** [Unidad 2: Frontend: layout y vistas Blade para el marketplace](./02_frontend_blade.md)
 
   **Siguiente capítulo →** [Controladores API](./03_04_controladores_API.md)
   

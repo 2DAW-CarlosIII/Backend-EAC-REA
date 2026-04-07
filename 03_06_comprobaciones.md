@@ -127,7 +127,7 @@ php artisan test
 ```
 
 
-**Unidad anterior ←** [Unidad 2: Frontend: layout y vistas Blade para el marketplace](./02_frontend_layout.md)
+**Unidad anterior ←** [Unidad 2: Frontend: layout y vistas Blade para el marketplace](./02_frontend_blade.md)
 
   **Siguiente capítulo →** [Verificación de la unidad](./03_07_verificacion_final.md)
   

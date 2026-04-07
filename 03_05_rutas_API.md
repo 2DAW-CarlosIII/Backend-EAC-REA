@@ -43,7 +43,7 @@ Route::prefix('v1')->name('api.v1.')->group(function () {
 
 ---
 
-**Unidad anterior ←** [Unidad 2: Frontend: layout y vistas Blade para el marketplace](./02_frontend_layout.md)
+**Unidad anterior ←** [Unidad 2: Frontend: layout y vistas Blade para el marketplace](./02_frontend_blade.md)
 
   **Siguiente capítulo →** [Verificación con curl](./03_06_comprobaciones.md)
   
