@@ -20,7 +20,7 @@
 |    | [2.7](./02_07_controladores.md) | [Controladores en Laravel](./02_07_controladores.md) |
 |    | [2.8](./02_08_rutas.md) | [Rutas](./02_08_rutas.md) |
 |    | [2.9](./02_09_middleware_helper.md) | [Middleware y helpers](./02_09_middleware_helper.md) |
-|    | [2.10](./02_10_verificación_final.md) | [Verificación final de la Unidad 2](./02_10_verificación_final.md) |
+|    | [2.10](./02_10_verificacion_final.md) | [Verificación final de la Unidad 2](./02_10_verificacion_final.md) |
 |    | [2.10](./02_11_soluciones.md) | [Soluciones a los ejercicios](./02_11_soluciones.md) |
 | [3](./03_api_rest_eac.md) |  | [API REST EAC](./03_api_rest_eac.md) |
 |    | [3.3](./03_03_recursos_API.md) | [Recursos API](./03_03_recursos_API.md) |

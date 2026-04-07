@@ -129,6 +129,6 @@ También, **sin modificar el código de la vista del estudiante**, debes posibil
 
 **Unidad anterior ←** [Unidad 1: Modelado de datos EAC en Laravel](./01_modelado_datos_eac.md)
 
-  **Siguiente capítulo →** [Verificación final de la Unidad 2](./02_10_verificación_final.md)
+  **Siguiente capítulo →** [Verificación final de la Unidad 2](./02_10_verificacion_final.md)
 
 **Siguiente unidad →** [Unidad 3: API REST EAC](./03_api_rest_eac.md)
