@@ -53,5 +53,11 @@
 |    | [6.8](./06_08_verificacion_tinker_curl.md) | [Verificación con Tinker y Curl](./06_08_verificacion_tinker_curl.md) |
 |    | [6.10](./06_10_verificacion_final.md) | [Verificación final](./06_10_verificacion_final.md) |
 | [7](./07_autorizacion_jwt.md) |  | [Autenticación con JWT de FIWARE](./07_autorizacion_jwt.md) |
+|    | [7.3](./07_03_servicio_jkws.md) | [El servicio JWKS: obtener y cachear las claves públicas](./07_03_servicio_jkws.md) |
+|    | [7.5](./07_05_guard_personalizado.md) | [Guard personalizado para autenticación con JWT](./07_05_guard_personalizado.md) |
+|    | [7.7](./07_07_registrar_guard_driver.md) | [Registrar el guard personalizado en Laravel](./07_07_registrar_guard_driver.md) |
+|    | [7.10](./07_10_comando_diagnostico.md) | [Comando de diagnóstico para el guard](./07_10_comando_diagnostico.md) |
+|    | [7.11](./07_11_verificacion_tinker_curl.md) | [Verificación manual con Tinker y curl](./07_11_verificacion_tinker_curl.md) |
+|    | [7.14](./07_14_verificacion_final.md) | [Verificación final de la Unidad 7](./07_14_verificacion_final.md) |
 | [8](./08_sincronizacion.md) |  | [Sincronización con FIWARE Orion](./08_sincronizacion.md) |
 | [9](./09_testing.md) |  | [Testing](./09_testing.md) |
